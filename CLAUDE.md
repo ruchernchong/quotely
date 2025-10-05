@@ -1,106 +1,135 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Quotely is a motivational quote generator that uses AI to create inspirational quotes with titles. It stores quotes in
+two formats:
+
+- **JSON**: All quotes in `quotes.json` with metadata (title, text, date, timestamp)
+- **Markdown**: Individual files organized by date in `quotes/yyyy/mm/dd-title-slug.md`
+
+A GitHub Action runs automatically to generate and commit new quotes.
+
+## Commands
+
+**Generate a quote:**
+```bash
+bun run src/update-quote.ts
+```
+
+**Install dependencies:**
+```bash
+bun install
+```
+
+**Code quality:**
+```bash
+# Format code
+bunx @biomejs/biome format --write .
+
+# Lint code
+bunx @biomejs/biome lint .
+
+# Check and fix
+bunx @biomejs/biome check --write .
+```
+
+## Architecture
+
+### Modular Structure
+
+```
+src/
+├── config.ts              # Constants (file paths)
+├── types/quote.ts         # TypeScript interfaces
+├── utils/
+│   ├── date.ts           # Date formatting utilities
+│   └── slugify.ts        # String slugification
+├── services/
+│   ├── generator.ts      # AI quote generation (Gemini 2.5 Flash)
+│   ├── json-storage.ts   # JSON read/write operations
+│   └── markdown-storage.ts # Markdown file creation
+└── update-quote.ts       # Main orchestrator
+```
+
+### Data Flow
+
+1. **Generate**: `services/generator.ts` uses Vercel AI SDK with `generateObject()` to create structured quotes (title +
+   text) via Gemini 2.5 Flash
+2. **Store JSON**: `services/json-storage.ts` appends quote to `quotes.json` array
+3. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
+4. **Automate**: GitHub Action (`.github/workflows/workflow.yml`) runs on schedule, executes the script, and commits
+   changes
+
+### AI Integration
+
+- Uses Vercel AI SDK (`ai` package) with Google AI provider (`@ai-sdk/google`)
+- Model: `gemini-2.5-flash` for creative quote generation
+- Schema validation with Zod ensures quotes have both `title` and `text`
+- Configured via `GOOGLE_GENERATIVE_AI_API_KEY` environment variable
+
+### Storage Patterns
+
+**JSON Storage** (`quotes.json`):
+
+```json
+[
+  {
+    "title": "Embrace the Journey",
+    "text": "Quote text here...",
+    "date": "2025-10-05",
+    "timestamp": "2025-10-05T16:00:00.000Z"
+  }
+]
+```
+
+**Markdown Files** (`quotes/2025/10/05-embrace-the-journey.md`):
+
+```markdown
+# Embrace the Journey
+
+> Quote text here...
+
+---
+
+*Sunday, October 5, 2025*
+```
+
+## Configuration
+
+Set `GOOGLE_GENERATIVE_AI_API_KEY` in `.env`:
+
+```bash
+GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
+```
+
+For GitHub Actions, add the key as a repository secret.
+
+## Code Quality
+
+This project uses **Biome** for formatting and linting:
+
+- **Formatter**: Enabled with space indentation, double quotes
+- **Linter**: Enabled with recommended rules
+- **Auto-organize imports**: Configured via assist actions
+- Configuration: `biome.json`
+
+Always run Biome checks before committing code.
+
+## Bun Runtime
 
 Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
 - Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
 - Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
 - Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+- Bun automatically loads .env, so don't use dotenv
 
-## APIs
+### Bun APIs
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
-
-## Testing
-
-Use `bun test` to run tests.
-
-```ts#index.test.ts
-import { test, expect } from "bun:test";
-
-test("hello world", () => {
-  expect(1).toBe(1);
-});
-```
-
-## Frontend
-
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
-
-Server:
-
-```ts#index.ts
-import index from "./index.html"
-
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
-
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
-
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx#frontend.tsx
-import React from "react";
-
-// import .css files directly and it works
-import './index.css';
-
-import { createRoot } from "react-dom/client";
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+- Prefer `Bun.file()` over `node:fs`'s readFile/writeFile
+- `Bun.write()` for file writing
+- Use standard Node.js APIs (`node:fs/promises`, `node:path`) for advanced operations

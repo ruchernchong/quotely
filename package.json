@@ -9,5 +9,10 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^2.0.17",
+    "ai": "^5.0.60",
+    "zod": "^4.1.11"
   }
 }
