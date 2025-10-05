@@ -1,21 +1,20 @@
+import { format } from "date-fns";
 import { QUOTES_JSON_PATH } from "./config.ts";
 import { generateQuote } from "./services/generator.ts";
 import { loadQuotes, saveQuotesToJson } from "./services/json-storage.ts";
 import { saveQuoteToMarkdown } from "./services/markdown-storage.ts";
 import type { Quote } from "./types/quote.ts";
-import { formatDate, getDateParts } from "./utils/date.ts";
 
 const main = async (): Promise<void> => {
   try {
     const { title, text } = await generateQuote();
     const now = new Date();
-    const dateParts = getDateParts(now);
 
     const quote: Quote = {
       title,
       text,
-      date: dateParts.isoDate,
-      timestamp: dateParts.timestamp,
+      date: format(now, "yyyy-MM-dd"),
+      timestamp: now.toISOString(),
     };
 
     // Save to JSON
@@ -24,8 +23,7 @@ const main = async (): Promise<void> => {
     await saveQuotesToJson(quotes);
 
     // Save to Markdown
-    const dateString = formatDate(now);
-    const filePath = await saveQuoteToMarkdown(quote, dateString);
+    const filePath = await saveQuoteToMarkdown(quote, quote.date);
 
     // Log success
     console.log("✅ Quote saved successfully!");
