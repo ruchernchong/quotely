@@ -67,35 +67,57 @@ src/
 bun test
 ```
 
-**Code Quality Tools:**
+**Code Quality:**
 
 This project uses [Biome](https://biomejs.dev) for linting and formatting:
 
 ```bash
 # Format code
-bunx @biomejs/biome format --write .
+bun run format
 
 # Lint code
-bunx @biomejs/biome lint .
+bun run lint
 
 # Check and fix all issues
-bunx @biomejs/biome check --write .
+bun run check
 ```
+
+**Git Hooks:**
+
+This project uses [Husky](https://typicode.github.io/husky/) to enforce code quality:
+
+- **pre-commit**: Automatically runs Biome on staged files
+- **commit-msg**: Validates commit messages follow [Conventional Commits](https://conventionalcommits.org/) format
 
 ## 🤖 GitHub Actions
 
-The workflow runs automatically on schedule. To set up:
+The workflow (`.github/workflows/update-quote.yml`) runs automatically:
+
+- **Schedule**: Daily at midnight UTC (`0 0 * * *`)
+- **Manual**: Can be triggered via workflow_dispatch
+
+**Setup:**
 
 1. Add `GOOGLE_GENERATIVE_AI_API_KEY` to repository secrets
 2. The action will generate and commit new quotes automatically
 
 ## 🛠️ Tech Stack
 
+**Runtime & Language:**
 - [Bun](https://bun.sh) - Fast all-in-one JavaScript runtime
+- TypeScript - Type safety
+
+**AI & Data:**
 - [Vercel AI SDK](https://ai-sdk.dev) - AI integration framework
 - [Gemini 2.5 Flash](https://ai.google.dev) - Google's AI model
 - [Zod](https://zod.dev) - Schema validation
-- [date-fns](https://date-fns.org) - Date formatting utilities
+
+**Utilities:**
+- [date-fns](https://date-fns.org) - Date formatting
 - [slugify](https://github.com/simov/slugify) - String slugification
+
+**Code Quality:**
 - [Biome](https://biomejs.dev) - Fast formatter and linter
-- TypeScript - Type safety
+- [Husky](https://typicode.github.io/husky/) - Git hooks
+- [lint-staged](https://github.com/lint-staged/lint-staged) - Pre-commit file linting
+- [commitlint](https://commitlint.js.org/) - Commit message validation

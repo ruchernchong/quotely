@@ -36,13 +36,13 @@ bun test
 
 ```bash
 # Format code
-bunx @biomejs/biome format --write .
+bun run format
 
 # Lint code
-bunx @biomejs/biome lint .
+bun run lint
 
 # Check and fix
-bunx @biomejs/biome check --write .
+bun run check
 ```
 
 ## Architecture
@@ -71,7 +71,7 @@ src/
    text) via Gemini 2.5 Flash
 2. **Store JSON**: `services/json-storage.ts` appends quote to `quotes.json` array
 3. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
-4. **Automate**: GitHub Action (`.github/workflows/workflow.yml`) runs on schedule, executes the script, and commits
+4. **Automate**: GitHub Action (`.github/workflows/update-quote.yml`) runs on schedule, executes the script, and commits
    changes
 
 ### AI Integration
@@ -126,7 +126,11 @@ This project uses **Biome** for formatting and linting:
 - **Auto-organize imports**: Configured via assist actions
 - Configuration: `biome.json`
 
-Always run Biome checks before committing code.
+**Git Hooks:**
+- **pre-commit**: Runs `lint-staged` to check and fix staged files with Biome
+- **commit-msg**: Validates commit messages against Conventional Commits specification via commitlint
+
+Hooks are managed via Husky and configured in `.husky/` directory.
 
 ## Conventional Commits
 
