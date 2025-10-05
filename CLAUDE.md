@@ -128,6 +128,24 @@ This project uses **Biome** for formatting and linting:
 
 Always run Biome checks before committing code.
 
+## Conventional Commits
+
+This project enforces **Conventional Commits** specification for commit messages:
+
+- **Format**: `type(scope): subject`
+- **Common types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- **Automated validation**: Git hooks (husky + commitlint) validate messages before commit
+
+**Examples:**
+```bash
+feat: add quote generation feature
+fix: correct date formatting in markdown
+docs: update README with installation steps
+chore: update dependencies
+```
+
+The commit message format is automatically enforced via the `commit-msg` git hook.
+
 ## AI Assistant Integration
 
 ### Context7 MCP
