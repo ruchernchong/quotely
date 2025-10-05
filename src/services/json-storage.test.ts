@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -17,7 +17,7 @@ describe("json-storage", () => {
     await rm(tempDir, { recursive: true, force: true });
   });
 
-  test("loads quotes from existing file", async () => {
+  it("should load quotes from existing file", async () => {
     const quotes: Quote[] = [
       {
         title: "Test Quote",
@@ -35,14 +35,14 @@ describe("json-storage", () => {
     expect(loaded).toEqual(quotes);
   });
 
-  test("returns empty array when file doesn't exist", async () => {
+  it("should return empty array when file doesn't exist", async () => {
     const file = Bun.file(testJsonPath);
     const exists = await file.exists();
 
     expect(exists).toBe(false);
   });
 
-  test("saves quotes to JSON file", async () => {
+  it("should save quotes to JSON file", async () => {
     const quotes: Quote[] = [
       {
         title: "Test Quote",

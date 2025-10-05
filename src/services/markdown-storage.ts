@@ -19,15 +19,21 @@ date: "${date}"
 `;
 };
 
+type SaveQuoteOptions = {
+  baseDir?: string;
+};
+
 export const saveQuoteToMarkdown = async (
   quote: Quote,
   date: string,
+  options?: SaveQuoteOptions,
 ): Promise<string> => {
   const timestamp = new Date(quote.timestamp);
   const year = format(timestamp, "yyyy");
   const month = format(timestamp, "MM");
   const day = format(timestamp, "dd");
-  const dirPath = join(QUOTES_DIR, year, month);
+  const baseDir = options?.baseDir ?? QUOTES_DIR;
+  const dirPath = join(baseDir, year, month);
 
   await mkdir(dirPath, { recursive: true });
 

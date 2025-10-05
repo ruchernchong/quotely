@@ -1,21 +1,22 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Quote } from "../types/quote";
+import { saveQuoteToMarkdown } from "./markdown-storage.ts";
 
 describe("markdown-storage", () => {
-  let tempDir: string;
+  let tempQuotesDir: string;
 
   beforeEach(async () => {
-    tempDir = await mkdtemp(join(tmpdir(), "quotely-test-"));
+    tempQuotesDir = await mkdtemp(join(tmpdir(), "quotely-markdown-"));
   });
 
   afterEach(async () => {
-    await rm(tempDir, { recursive: true, force: true });
+    await rm(tempQuotesDir, { recursive: true, force: true });
   });
 
-  test("creates markdown file with frontmatter", async () => {
+  it("should save markdown file with expected frontmatter", async () => {
     const quote: Quote = {
       title: "Embrace the Journey",
       text: "Every step forward is progress.",
@@ -23,33 +24,42 @@ describe("markdown-storage", () => {
       timestamp: "2025-10-05T12:00:00.000Z",
     };
 
-    const filePath = join(tempDir, "test.md");
-    const content = `---
-title: "${quote.title}"
-date: "${quote.date}"
----
+    const filePath = await saveQuoteToMarkdown(quote, quote.date, {
+      baseDir: tempQuotesDir,
+    });
 
-> ${quote.text}
-`;
+    expect(filePath).toBe(
+      join(tempQuotesDir, "2025", "10", "05-embrace-the-journey.md"),
+    );
 
-    await Bun.write(filePath, content);
     const file = Bun.file(filePath);
-    const result = await file.text();
-
-    expect(result).toContain('title: "Embrace the Journey"');
-    expect(result).toContain('date: "2025-10-05"');
-    expect(result).toContain("> Every step forward is progress.");
+    expect(await file.exists()).toBe(true);
+    expect(await file.text()).toBe(
+      `---\ntitle: "Embrace the Journey"\ndate: "2025-10-05"\n---\n\n> Every step forward is progress.\n`,
+    );
   });
 
-  test("creates correct filename with slug", async () => {
-    const title = "Embrace the Journey!";
-    const slug = title
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+  it("should slugify title when creating filename", async () => {
+    const quote: Quote = {
+      title: "Quiet! Focus & Grow",
+      text: "Cut the noise, nurture the signal.",
+      date: "2024-11-02",
+      timestamp: "2024-11-02T08:15:00.000Z",
+    };
 
-    expect(slug).toBe("embrace-the-journey");
+    const filePath = await saveQuoteToMarkdown(quote, quote.date, {
+      baseDir: tempQuotesDir,
+    });
+
+    expect(filePath).toBe(
+      join(tempQuotesDir, "2024", "11", "02-quiet-focus-and-grow.md"),
+    );
+
+    const file = Bun.file(filePath);
+    expect(await file.exists()).toBe(true);
+    const content = await file.text();
+
+    expect(content).toContain('title: "Quiet! Focus & Grow"');
+    expect(content).toContain("> Cut the noise, nurture the signal.");
   });
 });

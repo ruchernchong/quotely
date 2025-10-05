@@ -54,8 +54,8 @@ src/
 │   ├── generator.ts           # AI quote generation
 │   ├── json-storage.ts        # JSON operations
 │   ├── json-storage.test.ts   # JSON storage tests
-│   ├── markdown-storage.ts    # Markdown file creation
-│   └── markdown-storage.test.ts # Markdown storage tests
+│   ├── markdown-storage.ts    # Markdown file creation (optional baseDir override)
+│   └── markdown-storage.test.ts # Markdown storage tests (Bun describe/it)
 └── update-quote.ts        # Main orchestrator
 ```
 
@@ -66,6 +66,9 @@ src/
 ```bash
 bun test
 ```
+
+Tests use Bun's `describe`/`it("should …")` structure and interact with the filesystem through Node compatibility
+imports (e.g. `node:fs/promises`).
 
 **Code Quality:**
 
@@ -104,19 +107,23 @@ The workflow (`.github/workflows/update-quote.yml`) runs automatically:
 ## 🛠️ Tech Stack
 
 **Runtime & Language:**
+
 - [Bun](https://bun.sh) - Fast all-in-one JavaScript runtime
 - TypeScript - Type safety
 
 **AI & Data:**
+
 - [Vercel AI SDK](https://ai-sdk.dev) - AI integration framework
 - [Gemini 2.5 Flash](https://ai.google.dev) - Google's AI model
 - [Zod](https://zod.dev) - Schema validation
 
 **Utilities:**
+
 - [date-fns](https://date-fns.org) - Date formatting
 - [slugify](https://github.com/simov/slugify) - String slugification
 
 **Code Quality:**
+
 - [Biome](https://biomejs.dev) - Fast formatter and linter
 - [Husky](https://typicode.github.io/husky/) - Git hooks
 - [lint-staged](https://github.com/lint-staged/lint-staged) - Pre-commit file linting

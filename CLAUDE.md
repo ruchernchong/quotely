@@ -32,6 +32,9 @@ bun install
 bun test
 ```
 
+Tests follow Bun's `describe`/`it("should …")` convention and rely on Node-compatible modules via `node:`-prefixed
+imports when dealing with the filesystem.
+
 **Code quality:**
 
 ```bash
@@ -57,8 +60,8 @@ src/
 │   ├── generator.ts           # AI quote generation (Gemini 2.5 Flash)
 │   ├── json-storage.ts        # JSON read/write operations
 │   ├── json-storage.test.ts   # JSON storage tests
-│   ├── markdown-storage.ts    # Markdown file creation
-│   └── markdown-storage.test.ts # Markdown storage tests
+│   ├── markdown-storage.ts    # Markdown file creation (supports optional baseDir override)
+│   └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
 └── update-quote.ts       # Main orchestrator
 ```
 
@@ -127,6 +130,7 @@ This project uses **Biome** for formatting and linting:
 - Configuration: `biome.json`
 
 **Git Hooks:**
+
 - **pre-commit**: Runs `lint-staged` to check and fix staged files with Biome
 - **commit-msg**: Validates commit messages against Conventional Commits specification via commitlint
 
@@ -141,6 +145,7 @@ This project enforces **Conventional Commits** specification for commit messages
 - **Automated validation**: Git hooks (husky + commitlint) validate messages before commit
 
 **Examples:**
+
 ```bash
 feat: add quote generation feature
 fix: correct date formatting in markdown
@@ -154,15 +159,19 @@ The commit message format is automatically enforced via the `commit-msg` git hoo
 
 ### Context7 MCP
 
-This project is configured for use with Claude Code, which includes the Context7 MCP (Model Context Protocol) server for accessing up-to-date library documentation.
+This project is configured for use with Claude Code, which includes the Context7 MCP (Model Context Protocol) server for
+accessing up-to-date library documentation.
 
 **Capabilities:**
+
 - Fetch current documentation for any library or framework used in the project
 - Access version-specific API references and best practices
 - Get accurate code examples and usage patterns
 - Query documentation for dependencies without leaving the development workflow
 
 **Usage:**
-When working on this project, Claude Code can automatically retrieve documentation for any library by name. This ensures accurate, current guidance based on the actual library versions in use, rather than relying on potentially outdated training data.
+When working on this project, Claude Code can automatically retrieve documentation for any library by name. This ensures
+accurate, current guidance based on the actual library versions in use, rather than relying on potentially outdated
+training data.
 
 No manual setup required—Context7 integration is automatically available when using Claude Code.
