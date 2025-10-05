@@ -25,7 +25,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add quotes.json quotes/
-            git commit -m "chore: update quote"
+            git commit -m "chore: update quote [skip ci]"
             git push
           else
             echo "No changes to commit."
