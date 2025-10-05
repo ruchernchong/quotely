@@ -53,10 +53,11 @@ src/
 ├── services/              # Core services
 │   ├── generator.ts           # AI quote generation
 │   ├── json-storage.ts        # JSON operations
-│   ├── json-storage.test.ts   # JSON storage tests
-│   ├── markdown-storage.ts    # Markdown file creation (optional baseDir override)
-│   └── markdown-storage.test.ts # Markdown storage tests (Bun describe/it)
-└── update-quote.ts        # Main orchestrator
+│   └── markdown-storage.ts    # Markdown file creation (optional baseDir override)
+tests/
+└── services/              # Service-layer tests
+    ├── json-storage.test.ts   # JSON storage tests
+    └── markdown-storage.test.ts # Markdown storage tests (Bun describe/it)
 ```
 
 ## 🧪 Development

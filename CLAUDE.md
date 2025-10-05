@@ -59,10 +59,11 @@ src/
 ├── services/
 │   ├── generator.ts           # AI quote generation (Gemini 2.5 Flash)
 │   ├── json-storage.ts        # JSON read/write operations
-│   ├── json-storage.test.ts   # JSON storage tests
-│   ├── markdown-storage.ts    # Markdown file creation (supports optional baseDir override)
-│   └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
-└── update-quote.ts       # Main orchestrator
+│   └── markdown-storage.ts    # Markdown file creation (supports optional baseDir override)
+tests/
+└── services/              # Service-layer tests
+    ├── json-storage.test.ts   # JSON storage tests
+    └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
 ```
 
 **Note**: Utility functions (date formatting, slugification) are now handled by external packages (`date-fns`,
