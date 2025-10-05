@@ -18,6 +18,8 @@ jobs:
           bun-version: "latest"
       - run: bun install
       - run: bun run src/update-quote.ts
+        env:
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
       - run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             git config user.name "github-actions[bot]"
