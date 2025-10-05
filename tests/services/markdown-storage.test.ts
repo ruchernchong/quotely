@@ -16,50 +16,57 @@ describe("markdown-storage", () => {
     await rm(tempQuotesDir, { recursive: true, force: true });
   });
 
-  it("should save markdown file with expected frontmatter", async () => {
-    const quote: Quote = {
-      title: "Embrace the Journey",
-      text: "Every step forward is progress.",
-      date: "2025-10-05",
-      timestamp: "2025-10-05T12:00:00.000Z",
-    };
+  const testCases: {
+    quote: Quote;
+    expectedPath: string[];
+    expectedContent: string;
+  }[] = [
+    {
+      quote: {
+        title: "Embrace the Journey",
+        text: "Every step forward is progress.",
+        date: "2025-10-05",
+        timestamp: "2025-10-05T12:00:00.000Z",
+      },
+      expectedPath: ["2025", "10", "05-embrace-the-journey.md"],
+      expectedContent: `---
+title: "Embrace the Journey"
+date: "2025-10-05"
+---
 
-    const filePath = await saveQuoteToMarkdown(quote, quote.date, {
-      baseDir: tempQuotesDir,
-    });
+> Every step forward is progress.
+`,
+    },
+    {
+      quote: {
+        title: "Quiet! Focus & Grow",
+        text: "Cut the noise, nurture the signal.",
+        date: "2024-11-02",
+        timestamp: "2024-11-02T08:15:00.000Z",
+      },
+      expectedPath: ["2024", "11", "02-quiet-focus-and-grow.md"],
+      expectedContent: `---
+title: "Quiet! Focus & Grow"
+date: "2024-11-02"
+---
 
-    expect(filePath).toBe(
-      join(tempQuotesDir, "2025", "10", "05-embrace-the-journey.md"),
-    );
+> Cut the noise, nurture the signal.
+`,
+    },
+  ];
 
-    const file = Bun.file(filePath);
-    expect(await file.exists()).toBe(true);
-    expect(await file.text()).toBe(
-      `---\ntitle: "Embrace the Journey"\ndate: "2025-10-05"\n---\n\n> Every step forward is progress.\n`,
-    );
-  });
+  it.each(testCases)(
+    "should save markdown for '$quote.title'",
+    async ({ quote, expectedPath, expectedContent }) => {
+      const filePath = await saveQuoteToMarkdown(quote, quote.date, {
+        baseDir: tempQuotesDir,
+      });
 
-  it("should slugify title when creating filename", async () => {
-    const quote: Quote = {
-      title: "Quiet! Focus & Grow",
-      text: "Cut the noise, nurture the signal.",
-      date: "2024-11-02",
-      timestamp: "2024-11-02T08:15:00.000Z",
-    };
+      expect(filePath).toBe(join(tempQuotesDir, ...expectedPath));
 
-    const filePath = await saveQuoteToMarkdown(quote, quote.date, {
-      baseDir: tempQuotesDir,
-    });
-
-    expect(filePath).toBe(
-      join(tempQuotesDir, "2024", "11", "02-quiet-focus-and-grow.md"),
-    );
-
-    const file = Bun.file(filePath);
-    expect(await file.exists()).toBe(true);
-    const content = await file.text();
-
-    expect(content).toContain('title: "Quiet! Focus & Grow"');
-    expect(content).toContain("> Cut the noise, nurture the signal.");
-  });
+      const file = Bun.file(filePath);
+      expect(await file.exists()).toBe(true);
+      expect(await file.text()).toBe(expectedContent);
+    },
+  );
 });
