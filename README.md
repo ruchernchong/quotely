@@ -50,15 +50,22 @@ bun run src/update-quote.ts
 src/
 ├── config.ts              # Constants
 ├── types/quote.ts         # TypeScript interfaces
-├── utils/                 # Utility functions (date, slugify)
 ├── services/              # Core services
-│   ├── generator.ts       # AI quote generation
-│   ├── json-storage.ts    # JSON operations
-│   └── markdown-storage.ts # Markdown file creation
+│   ├── generator.ts           # AI quote generation
+│   ├── json-storage.ts        # JSON operations
+│   ├── json-storage.test.ts   # JSON storage tests
+│   ├── markdown-storage.ts    # Markdown file creation
+│   └── markdown-storage.test.ts # Markdown storage tests
 └── update-quote.ts        # Main orchestrator
 ```
 
 ## 🧪 Development
+
+**Testing:**
+
+```bash
+bun test
+```
 
 **Code Quality Tools:**
 
@@ -85,8 +92,10 @@ The workflow runs automatically on schedule. To set up:
 ## 🛠️ Tech Stack
 
 - [Bun](https://bun.sh) - Fast all-in-one JavaScript runtime
-- [Vercel AI SDK](https://sdk.vercel.ai) - AI integration framework
+- [Vercel AI SDK](https://ai-sdk.dev) - AI integration framework
 - [Gemini 2.5 Flash](https://ai.google.dev) - Google's AI model
 - [Zod](https://zod.dev) - Schema validation
+- [date-fns](https://date-fns.org) - Date formatting utilities
+- [slugify](https://github.com/simov/slugify) - String slugification
 - [Biome](https://biomejs.dev) - Fast formatter and linter
 - TypeScript - Type safety

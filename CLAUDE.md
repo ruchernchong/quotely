@@ -15,16 +15,25 @@ A GitHub Action runs automatically to generate and commit new quotes.
 ## Commands
 
 **Generate a quote:**
+
 ```bash
 bun run src/update-quote.ts
 ```
 
 **Install dependencies:**
+
 ```bash
 bun install
 ```
 
+**Run tests:**
+
+```bash
+bun test
+```
+
 **Code quality:**
+
 ```bash
 # Format code
 bunx @biomejs/biome format --write .
@@ -44,15 +53,17 @@ bunx @biomejs/biome check --write .
 src/
 ├── config.ts              # Constants (file paths)
 ├── types/quote.ts         # TypeScript interfaces
-├── utils/
-│   ├── date.ts           # Date formatting utilities
-│   └── slugify.ts        # String slugification
 ├── services/
-│   ├── generator.ts      # AI quote generation (Gemini 2.5 Flash)
-│   ├── json-storage.ts   # JSON read/write operations
-│   └── markdown-storage.ts # Markdown file creation
+│   ├── generator.ts           # AI quote generation (Gemini 2.5 Flash)
+│   ├── json-storage.ts        # JSON read/write operations
+│   ├── json-storage.test.ts   # JSON storage tests
+│   ├── markdown-storage.ts    # Markdown file creation
+│   └── markdown-storage.test.ts # Markdown storage tests
 └── update-quote.ts       # Main orchestrator
 ```
+
+**Note**: Utility functions (date formatting, slugification) are now handled by external packages (`date-fns`,
+`slugify`).
 
 ### Data Flow
 
@@ -85,16 +96,15 @@ src/
 ]
 ```
 
-**Markdown Files** (`quotes/2025/10/05-embrace-the-journey.md`):
+**Markdown Files** (`quotes/2025/10/06-embrace-the-journey.md`):
 
 ```markdown
-# Embrace the Journey
-
-> Quote text here...
-
+---
+title: "Embrace the Journey"
+date: "2025-10-06"
 ---
 
-*Sunday, October 5, 2025*
+> Quote text here...
 ```
 
 ## Configuration
@@ -118,18 +128,19 @@ This project uses **Biome** for formatting and linting:
 
 Always run Biome checks before committing code.
 
-## Bun Runtime
+## AI Assistant Integration
 
-Default to using Bun instead of Node.js.
+### Context7 MCP
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv
+This project is configured for use with Claude Code, which includes the Context7 MCP (Model Context Protocol) server for accessing up-to-date library documentation.
 
-### Bun APIs
+**Capabilities:**
+- Fetch current documentation for any library or framework used in the project
+- Access version-specific API references and best practices
+- Get accurate code examples and usage patterns
+- Query documentation for dependencies without leaving the development workflow
 
-- Prefer `Bun.file()` over `node:fs`'s readFile/writeFile
-- `Bun.write()` for file writing
-- Use standard Node.js APIs (`node:fs/promises`, `node:path`) for advanced operations
+**Usage:**
+When working on this project, Claude Code can automatically retrieve documentation for any library by name. This ensures accurate, current guidance based on the actual library versions in use, rather than relying on potentially outdated training data.
+
+No manual setup required—Context7 integration is automatically available when using Claude Code.
