@@ -1,3 +1,5 @@
+import { randomInt } from "node:crypto";
+
 export const THEMES = [
   "career and ambition",
   "relationships and connection",
@@ -56,7 +58,11 @@ export const LENGTHS = [
 ] as const;
 
 export const getRandomElement = <T>(array: readonly T[]): T => {
-  return array[Math.floor(Math.random() * array.length)];
+  if (array.length === 0) {
+    throw new RangeError("getRandomElement requires a non-empty array");
+  }
+
+  return array[randomInt(array.length)];
 };
 
 export interface QuoteVariety {
