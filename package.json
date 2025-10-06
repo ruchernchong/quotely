@@ -8,7 +8,8 @@
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release": "semantic-release"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.17",
@@ -25,9 +26,13 @@
     "@biomejs/biome": "^2.2.5",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
     "@types/bun": "^1.1.13",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.3"
+    "lint-staged": "^16.2.3",
+    "semantic-release": "^24.2.9"
   },
   "peerDependencies": {
     "typescript": "^5"

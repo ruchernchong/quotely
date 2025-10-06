@@ -12,7 +12,9 @@ two formats:
 
 A GitHub Action runs automatically to generate and commit new quotes.
 
-**Observability**: The project uses LangFuse for AI observability and analytics, tracking all quote generations with detailed telemetry including model usage, token consumption, latency metrics, and custom metadata (theme, tone, style, length).
+**Observability**: The project uses LangFuse for AI observability and analytics, tracking all quote generations with
+detailed telemetry including model usage, token consumption, latency metrics, and custom metadata (theme, tone, style,
+length).
 
 ## Commands
 
@@ -79,11 +81,11 @@ tests/
 
 1. **Generate**: `services/generator.ts` uses Vercel AI SDK with `generateObject()` to create structured quotes (title +
    text) via Gemini 2.5 Flash with dynamic variety system
-   - Randomly selects from 20 themes (career, creativity, courage, purpose, etc.)
-   - Randomly selects from 12 tones (poetic, raw, humorous, philosophical, etc.)
-   - Randomly selects from 10 styles (metaphorical, question-based, paradoxical, etc.)
-   - Randomly selects from 3 length ranges (brief, standard, expansive)
-   - Creates unique, context-rich prompts for each generation (7,200 possible combinations)
+    - Randomly selects from 20 themes (career, creativity, courage, purpose, etc.)
+    - Randomly selects from 12 tones (poetic, raw, humorous, philosophical, etc.)
+    - Randomly selects from 10 styles (metaphorical, question-based, paradoxical, etc.)
+    - Randomly selects from 3 length ranges (brief, standard, expansive)
+    - Creates unique, context-rich prompts for each generation (7,200 possible combinations)
 2. **Check for duplicates**: `services/json-storage.ts` checks if a quote already exists for today's date
 3. **Store/Replace JSON**: Either appends new quote or replaces existing quote in `quotes.json` array
 4. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
@@ -91,7 +93,8 @@ tests/
 5. **Automate**: GitHub Action (`.github/workflows/update-quote.yml`) runs on schedule, executes the script, and commits
    changes
 
-**Duplicate Handling**: The script automatically replaces quotes for the current date instead of creating duplicates. This
+**Duplicate Handling**: The script automatically replaces quotes for the current date instead of creating duplicates.
+This
 ensures daily GitHub activity (commits) while maintaining data integrity. Running the script multiple times on the same
 day will replace the existing quote rather than skip or append.
 
@@ -110,10 +113,12 @@ The project integrates LangFuse for comprehensive AI observability using OpenTel
 - **Observation Wrapping**: Main function wrapped with `observe()` from `@langfuse/tracing` for automatic trace creation
 - **Active Updates**: Uses `updateActiveTrace()` and `updateActiveObservation()` to enrich traces with metadata
 - **AI SDK Telemetry**: Vercel AI SDK's `experimental_telemetry` enabled with `isEnabled: true` and custom metadata
-- **Flush Handling**: Ensures proper span flushing via `forceFlush()` before shutdown (critical for short-lived environments)
+- **Flush Handling**: Ensures proper span flushing via `forceFlush()` before shutdown (critical for short-lived
+  environments)
 - **Environment Variables**: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST`
 
 **Tracked Metrics**:
+
 - Trace name: `generate-daily-quote`
 - Tags: `quote-generation`, `daily-automation`
 - Input metadata: theme, tone, style, length (from variety system)
@@ -137,7 +142,8 @@ The variety system ensures each generated quote is unique and diverse by randoml
 
 - **10 Styles**: metaphorical (using nature, journey, or object metaphors), storytelling (brief narrative or parable),
   direct advice (clear actionable wisdom), question-based (posing thought-provoking questions), paradoxical (embracing
-  contradictions), contrarian (challenging common beliefs), observational (keen insights about human nature), comparative
+  contradictions), contrarian (challenging common beliefs), observational (keen insights about human nature),
+  comparative
   (contrasting two concepts), imperative (strong calls to action), reflective (looking inward)
 
 - **3 Lengths**: brief (20-40 words), standard (40-70 words), expansive (70-100 words)
@@ -181,7 +187,8 @@ date: "2025-10-06"
 **Markdown Storage Functions**:
 
 - `saveQuoteToMarkdown(quote, date, options?)` - Create markdown file with title-slug in filename
-- `deleteQuoteMarkdown(quote, options?)` - Delete all markdown files matching the date (e.g., `06-*.md`) to support replacement even when titles change
+- `deleteQuoteMarkdown(quote, options?)` - Delete all markdown files matching the date (e.g., `06-*.md`) to support
+  replacement even when titles change
 
 ## Configuration
 
@@ -202,6 +209,7 @@ LANGFUSE_DEBUG=true
 ```
 
 **For GitHub Actions**, add these secrets to repository settings:
+
 - `GOOGLE_GENERATIVE_AI_API_KEY`
 - `LANGFUSE_PUBLIC_KEY`
 - `LANGFUSE_SECRET_KEY`
@@ -244,6 +252,41 @@ chore: update dependencies
 
 The commit message format is automatically enforced via the `commit-msg` git hook.
 
+## Semantic Release
+
+This project uses **semantic-release** to automate versioning and releases based on Conventional Commits:
+
+**How it works:**
+
+- Analyzes commit messages to determine version bumps:
+    - `feat:` commits → minor version (e.g., 1.0.0 → 1.1.0)
+    - `fix:` commits → patch version (e.g., 1.0.0 → 1.0.1)
+    - `BREAKING CHANGE:` in commit body → major version (e.g., 1.0.0 → 2.0.0)
+- Automatically generates `CHANGELOG.md` from commit messages
+- Creates Git tags (e.g., `v1.2.0`)
+- Creates GitHub releases with release notes
+- Updates `package.json` version
+
+**Automation:**
+
+- Releases are triggered automatically on push to `main` branch via GitHub Actions (`.github/workflows/release.yml`)
+- Tests must pass before release workflow runs
+- Workflow runs `bunx semantic-release` with `GITHUB_TOKEN` authentication
+
+**Manual release:**
+
+```bash
+bun run release
+```
+
+**Configuration:**
+
+- `.releaserc.json` - Semantic release configuration
+- Plugins: commit-analyzer, release-notes-generator, changelog, npm (no publish), github, git
+- Package is marked as `private` to prevent npm publishing
+
+**Note**: The workflow includes `[skip ci]` in release commits to prevent infinite loops.
+
 ## Documentation Maintenance
 
 This section defines when changes require updates to project documentation.
@@ -253,29 +296,34 @@ This section defines when changes require updates to project documentation.
 Update this file when making changes that affect how AI assistants or developers work with the codebase:
 
 **Architecture & Structure:**
+
 - New services, modules, or major architectural changes
 - Changes to data flow or processing pipelines
 - New functions/APIs in existing services (update function lists)
 - Changes to file organization or project structure
 
 **Configuration & Environment:**
+
 - New environment variables or configuration options
 - Changes to existing configuration requirements
 - Updates to .env setup or secrets management
 
 **Dependencies & Integrations:**
+
 - New external services (AI providers, observability tools, APIs)
 - Major dependency additions or replacements
 - Changes to AI model configuration or providers
 - Updates to telemetry or monitoring systems
 
 **Development Workflow:**
+
 - New commands or scripts
 - Changes to testing patterns or test structure
 - Updates to git hooks or automation
 - New code quality tools or linting rules
 
 **Data & Storage:**
+
 - Changes to JSON or Markdown storage patterns
 - New storage functions or data transformations
 - Updates to duplicate handling or replacement logic
@@ -285,27 +333,32 @@ Update this file when making changes that affect how AI assistants or developers
 Update this file when making changes that affect user experience or project setup:
 
 **Features & Functionality:**
+
 - New user-facing features
 - Major functionality additions or changes
 - Updates to quote generation behavior (themes, tones, styles)
 
 **Setup & Installation:**
+
 - Changes to installation steps
 - New environment variables users need to configure
 - Updates to API key requirements or setup
 - Changes to GitHub Actions secrets
 
 **Usage & Commands:**
+
 - New CLI commands or scripts
 - Changes to how users run or interact with the project
 - Updates to testing or development commands
 
 **Tech Stack:**
+
 - New major dependencies or frameworks
 - Changes to runtime (Bun, Node, etc.)
 - Updates to AI models or providers
 
 **Automation:**
+
 - Changes to GitHub Actions behavior or schedule
 - Updates to workflow triggers or automation logic
 
@@ -315,7 +368,8 @@ Before committing changes, ask:
 
 - [ ] Did I add/modify services or core functionality? → Update **CLAUDE.md** Architecture section
 - [ ] Did I add new environment variables? → Update **both** Configuration sections
-- [ ] Did I add external integrations or dependencies? → Update **both** (technical details in CLAUDE.md, user impact in README.md)
+- [ ] Did I add external integrations or dependencies? → Update **both** (technical details in CLAUDE.md, user impact in
+  README.md)
 - [ ] Did I change user-facing features? → Update **README.md** Features section
 - [ ] Did I modify commands or workflows? → Update **both** Commands sections
 - [ ] Did I change data storage patterns? → Update **CLAUDE.md** Storage Patterns section

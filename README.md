@@ -38,6 +38,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 ```
 
 **Get your keys:**
+
 - Google AI: [Google AI Studio](https://aistudio.google.com/apikey)
 - LangFuse: [LangFuse Project Settings](https://cloud.langfuse.com) (optional, for observability)
 
@@ -50,13 +51,14 @@ bun run src/update-quote.ts
 ## 📁 How It Works
 
 1. **Generate**: Uses Vercel AI SDK with Gemini 2.5 Flash to create structured quotes (title + text)
-   - Randomly selects theme, tone, style, and length from variety system
-   - Creates unique, context-rich prompts for maximum creativity
-   - Prevents repetitive or generic quotes
+    - Randomly selects theme, tone, style, and length from variety system
+    - Creates unique, context-rich prompts for maximum creativity
+    - Prevents repetitive or generic quotes
 2. **Check**: Detects if a quote already exists for today's date
 3. **Store/Replace**:
     - **New quote**: Adds to `quotes.json` and creates new markdown file
-    - **Existing quote**: Replaces entry in `quotes.json` and updates markdown file (deletes all files matching date pattern first)
+    - **Existing quote**: Replaces entry in `quotes.json` and updates markdown file (deletes all files matching date
+      pattern first)
     - Files stored at `quotes/yyyy/mm/dd-title-slug.md`
 4. **Automate**: GitHub Actions runs daily to generate and commit quotes (always creates a commit for daily activity)
 
@@ -84,11 +86,14 @@ tests/
 
 Every quote is generated with unique characteristics by randomly combining:
 
-**20 Themes**: career, relationships, creativity, resilience, adventure, mindfulness, courage, wisdom, health, change, purpose, authenticity, leadership, gratitude, failure, time, solitude, passion, discipline, freedom
+**20 Themes**: career, relationships, creativity, resilience, adventure, mindfulness, courage, wisdom, health, change,
+purpose, authenticity, leadership, gratitude, failure, time, solitude, passion, discipline, freedom
 
-**12 Tones**: powerful, gentle, humorous, philosophical, poetic, raw, practical, provocative, warm, mysterious, rebellious, serene
+**12 Tones**: powerful, gentle, humorous, philosophical, poetic, raw, practical, provocative, warm, mysterious,
+rebellious, serene
 
-**10 Styles**: metaphorical, storytelling, direct advice, question-based, paradoxical, contrarian, observational, comparative, imperative, reflective
+**10 Styles**: metaphorical, storytelling, direct advice, question-based, paradoxical, contrarian, observational,
+comparative, imperative, reflective
 
 **3 Lengths**: brief (20-40 words), standard (40-70 words), expansive (70-100 words)
 
@@ -99,6 +104,7 @@ Every quote is generated with unique characteristics by randomly combining:
 This project uses **LangFuse** for comprehensive AI observability and analytics:
 
 **What's Tracked:**
+
 - 🎯 Every quote generation trace with full lifecycle
 - 📈 Model usage metrics (Gemini 2.5 Flash)
 - 💰 Token consumption and cost analysis
@@ -107,6 +113,7 @@ This project uses **LangFuse** for comprehensive AI observability and analytics:
 - 📝 Input/output tracking for each generation
 
 **Integration Details:**
+
 - Uses OpenTelemetry with `@langfuse/otel` and `@langfuse/tracing`
 - Automatic span collection via `LangfuseSpanProcessor`
 - Vercel AI SDK telemetry enabled with `experimental_telemetry`
@@ -157,6 +164,7 @@ The workflow (`.github/workflows/update-quote.yml`) runs automatically:
 **Setup:**
 
 Add these secrets to your repository (Settings → Secrets and variables → Actions):
+
 1. `GOOGLE_GENERATIVE_AI_API_KEY` - Required for AI generation
 2. `LANGFUSE_PUBLIC_KEY` - Optional, for observability
 3. `LANGFUSE_SECRET_KEY` - Optional, for observability
@@ -167,6 +175,16 @@ Add these secrets to your repository (Settings → Secrets and variables → Act
 - First run of the day: Creates new quote and commits
 - Subsequent runs: Replaces existing quote and commits (ensures daily GitHub activity)
 - Each run always creates a commit, maintaining consistent contribution graph
+
+A separate workflow (`.github/workflows/release.yml`) runs on pushes to `main`, running the tests and `semantic-release` before creating releases.
+
+## 📦 Releases
+
+Semantic-release keeps project versions, changelog entries, and GitHub releases in sync with Conventional Commits.
+
+- `.github/workflows/release.yml` runs on pushes to `main` after tests succeed and executes `bunx semantic-release`
+- Releases update `CHANGELOG.md`, tag the commit, and publish GitHub releases without publishing to npm
+- Run `bun run release` locally to trigger the same flow (requires `GITHUB_TOKEN` with repo scope when run outside CI)
 
 ## 🛠️ Tech Stack
 
