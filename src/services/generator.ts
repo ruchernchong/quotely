@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { google } from "@ai-sdk/google";
 import { updateActiveObservation } from "@langfuse/tracing";
 import { generateObject } from "ai";
@@ -5,24 +8,21 @@ import { z } from "zod";
 import { generateVariety } from "../config/quote-variety.ts";
 import type { GeneratedQuote } from "../types/quote.ts";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const promptTemplate = readFileSync(
+  join(__dirname, "../prompts/generate-quote.md"),
+  "utf-8",
+);
+
 export const generateQuote = async (): Promise<GeneratedQuote> => {
   const variety = generateVariety();
 
-  const prompt = `Generate a unique and memorable motivational quote with a title.
-
-Theme: ${variety.theme}
-Tone: ${variety.tone}
-Style: ${variety.style}
-Length: ${variety.length.range}
-
-Requirements:
-- Create a title that captures the essence in 3-6 words (should be unique and creative, not generic)
-- Write the quote in the specified style and tone
-- Keep the quote within the specified word count
-- Make it inspiring and thought-provoking
-- Do NOT use quotation marks in the quote text
-- Avoid clichés and generic motivational phrases
-- Be specific and memorable`;
+  const prompt = promptTemplate
+    .replace("{{theme}}", variety.theme)
+    .replace("{{tone}}", variety.tone)
+    .replace("{{style}}", variety.style)
+    .replace("{{length}}", variety.length.range);
 
   // Update observation with input metadata
   updateActiveObservation({
