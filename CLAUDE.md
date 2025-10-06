@@ -244,6 +244,84 @@ chore: update dependencies
 
 The commit message format is automatically enforced via the `commit-msg` git hook.
 
+## Documentation Maintenance
+
+This section defines when changes require updates to project documentation.
+
+### When to Update CLAUDE.md
+
+Update this file when making changes that affect how AI assistants or developers work with the codebase:
+
+**Architecture & Structure:**
+- New services, modules, or major architectural changes
+- Changes to data flow or processing pipelines
+- New functions/APIs in existing services (update function lists)
+- Changes to file organization or project structure
+
+**Configuration & Environment:**
+- New environment variables or configuration options
+- Changes to existing configuration requirements
+- Updates to .env setup or secrets management
+
+**Dependencies & Integrations:**
+- New external services (AI providers, observability tools, APIs)
+- Major dependency additions or replacements
+- Changes to AI model configuration or providers
+- Updates to telemetry or monitoring systems
+
+**Development Workflow:**
+- New commands or scripts
+- Changes to testing patterns or test structure
+- Updates to git hooks or automation
+- New code quality tools or linting rules
+
+**Data & Storage:**
+- Changes to JSON or Markdown storage patterns
+- New storage functions or data transformations
+- Updates to duplicate handling or replacement logic
+
+### When to Update README.md
+
+Update this file when making changes that affect user experience or project setup:
+
+**Features & Functionality:**
+- New user-facing features
+- Major functionality additions or changes
+- Updates to quote generation behavior (themes, tones, styles)
+
+**Setup & Installation:**
+- Changes to installation steps
+- New environment variables users need to configure
+- Updates to API key requirements or setup
+- Changes to GitHub Actions secrets
+
+**Usage & Commands:**
+- New CLI commands or scripts
+- Changes to how users run or interact with the project
+- Updates to testing or development commands
+
+**Tech Stack:**
+- New major dependencies or frameworks
+- Changes to runtime (Bun, Node, etc.)
+- Updates to AI models or providers
+
+**Automation:**
+- Changes to GitHub Actions behavior or schedule
+- Updates to workflow triggers or automation logic
+
+### Quick Reference Checklist
+
+Before committing changes, ask:
+
+- [ ] Did I add/modify services or core functionality? → Update **CLAUDE.md** Architecture section
+- [ ] Did I add new environment variables? → Update **both** Configuration sections
+- [ ] Did I add external integrations or dependencies? → Update **both** (technical details in CLAUDE.md, user impact in README.md)
+- [ ] Did I change user-facing features? → Update **README.md** Features section
+- [ ] Did I modify commands or workflows? → Update **both** Commands sections
+- [ ] Did I change data storage patterns? → Update **CLAUDE.md** Storage Patterns section
+
+**Rule of thumb**: If it changes behavior, configuration, or structure, update documentation. When in doubt, update it.
+
 ## AI Assistant Integration
 
 ### Context7 MCP
