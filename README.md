@@ -9,7 +9,8 @@ inspirational quotes with AI-generated titles.
 - 📝 Generates both quote text and creative titles
 - 💾 Dual storage: JSON + organized Markdown files
 - 📅 Automatic organization by date (`quotes/yyyy/mm/`)
-- ⚙️ GitHub Actions automation
+- 🔄 Smart duplicate handling - replaces quotes for same day
+- ⚙️ GitHub Actions automation with daily commits
 - 🎯 Modular, maintainable architecture
 
 ## 🚀 Setup
@@ -39,10 +40,12 @@ bun run src/update-quote.ts
 ## 📁 How It Works
 
 1. **Generate**: Uses Vercel AI SDK with Gemini 2.5 Flash to create structured quotes (title + text)
-2. **Store**: Saves to both:
-    - `quotes.json` - All quotes with metadata
-    - `quotes/yyyy/mm/dd-title-slug.md` - Individual markdown files organized by date
-3. **Automate**: GitHub Actions runs on schedule to generate and commit new quotes
+2. **Check**: Detects if a quote already exists for today's date
+3. **Store/Replace**:
+    - **New quote**: Adds to `quotes.json` and creates new markdown file
+    - **Existing quote**: Replaces entry in `quotes.json` and updates markdown file
+    - Files stored at `quotes/yyyy/mm/dd-title-slug.md`
+4. **Automate**: GitHub Actions runs daily to generate and commit quotes (always creates a commit for daily activity)
 
 ## 🏗️ Project Structure
 
@@ -52,12 +55,12 @@ src/
 ├── types/quote.ts         # TypeScript interfaces
 ├── services/              # Core services
 │   ├── generator.ts           # AI quote generation
-│   ├── json-storage.ts        # JSON operations
-│   └── markdown-storage.ts    # Markdown file creation (optional baseDir override)
+│   ├── json-storage.ts        # JSON read/write/replace operations
+│   └── markdown-storage.ts    # Markdown create/delete operations
 tests/
-└── services/              # Service-layer tests
-    ├── json-storage.test.ts   # JSON storage tests
-    └── markdown-storage.test.ts # Markdown storage tests (Bun describe/it)
+└── services/              # Service-layer tests (14 test cases)
+    ├── json-storage.test.ts   # JSON storage & replacement tests
+    └── markdown-storage.test.ts # Markdown storage & deletion tests
 ```
 
 ## 🧪 Development
@@ -104,6 +107,12 @@ The workflow (`.github/workflows/update-quote.yml`) runs automatically:
 
 1. Add `GOOGLE_GENERATIVE_AI_API_KEY` to repository secrets
 2. The action will generate and commit new quotes automatically
+
+**Behavior:**
+
+- First run of the day: Creates new quote and commits
+- Subsequent runs: Replaces existing quote and commits (ensures daily GitHub activity)
+- Each run always creates a commit, maintaining consistent contribution graph
 
 ## 🛠️ Tech Stack
 

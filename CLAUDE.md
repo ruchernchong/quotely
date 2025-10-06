@@ -58,11 +58,11 @@ src/
 ├── types/quote.ts         # TypeScript interfaces
 ├── services/
 │   ├── generator.ts           # AI quote generation (Gemini 2.5 Flash)
-│   ├── json-storage.ts        # JSON read/write operations
-│   └── markdown-storage.ts    # Markdown file creation (supports optional baseDir override)
+│   ├── json-storage.ts        # JSON read/write/replace operations
+│   └── markdown-storage.ts    # Markdown file creation/deletion (supports optional baseDir override)
 tests/
 └── services/              # Service-layer tests
-    ├── json-storage.test.ts   # JSON storage tests
+    ├── json-storage.test.ts   # JSON storage tests (14 test cases)
     └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
 ```
 
@@ -73,10 +73,16 @@ tests/
 
 1. **Generate**: `services/generator.ts` uses Vercel AI SDK with `generateObject()` to create structured quotes (title +
    text) via Gemini 2.5 Flash
-2. **Store JSON**: `services/json-storage.ts` appends quote to `quotes.json` array
-3. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
-4. **Automate**: GitHub Action (`.github/workflows/update-quote.yml`) runs on schedule, executes the script, and commits
+2. **Check for duplicates**: `services/json-storage.ts` checks if a quote already exists for today's date
+3. **Store/Replace JSON**: Either appends new quote or replaces existing quote in `quotes.json` array
+4. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
+   (deletes old file first if replacing)
+5. **Automate**: GitHub Action (`.github/workflows/update-quote.yml`) runs on schedule, executes the script, and commits
    changes
+
+**Duplicate Handling**: The script automatically replaces quotes for the current date instead of creating duplicates. This
+ensures daily GitHub activity (commits) while maintaining data integrity. Running the script multiple times on the same
+day will replace the existing quote rather than skip or append.
 
 ### AI Integration
 
@@ -100,6 +106,14 @@ tests/
 ]
 ```
 
+**JSON Storage Functions**:
+
+- `loadQuotes()` - Load all quotes from JSON
+- `saveQuotesToJson()` - Save quotes array to JSON
+- `hasTodaysQuote(date)` - Check if quote exists for date
+- `getQuoteByDate(date)` - Retrieve quote for specific date
+- `replaceQuoteByDate(quote)` - Replace existing quote with same date
+
 **Markdown Files** (`quotes/2025/10/06-embrace-the-journey.md`):
 
 ```markdown
@@ -110,6 +124,11 @@ date: "2025-10-06"
 
 > Quote text here...
 ```
+
+**Markdown Storage Functions**:
+
+- `saveQuoteToMarkdown(quote, date, options?)` - Create markdown file
+- `deleteQuoteMarkdown(quote, options?)` - Delete markdown file (used when replacing)
 
 ## Configuration
 
