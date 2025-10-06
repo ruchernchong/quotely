@@ -1,4 +1,5 @@
 import { google } from "@ai-sdk/google";
+import { updateActiveObservation } from "@langfuse/tracing";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { generateVariety } from "../config/quote-variety.ts";
@@ -23,6 +24,16 @@ Requirements:
 - Avoid clichés and generic motivational phrases
 - Be specific and memorable`;
 
+  // Update observation with input metadata
+  updateActiveObservation({
+    input: {
+      theme: variety.theme,
+      tone: variety.tone,
+      style: variety.style,
+      length: variety.length.description,
+    },
+  });
+
   const { object } = await generateObject({
     model: google("gemini-2.5-flash"),
     schema: z.object({
@@ -38,6 +49,21 @@ Requirements:
         ),
     }),
     prompt,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: "generate-quote",
+      metadata: {
+        theme: variety.theme,
+        tone: variety.tone,
+        style: variety.style,
+        length: variety.length.description,
+      },
+    },
+  });
+
+  // Update observation with output
+  updateActiveObservation({
+    output: object,
   });
 
   return object;

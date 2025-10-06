@@ -12,6 +12,10 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.17",
+    "@langfuse/otel": "^4.2.0",
+    "@langfuse/tracing": "^4.2.0",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-trace-node": "^2.1.0",
     "ai": "^5.0.60",
     "date-fns": "^4.1.0",
     "slugify": "^1.6.6",

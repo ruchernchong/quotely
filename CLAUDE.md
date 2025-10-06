@@ -12,6 +12,8 @@ two formats:
 
 A GitHub Action runs automatically to generate and commit new quotes.
 
+**Observability**: The project uses LangFuse for AI observability and analytics, tracking all quote generations with detailed telemetry including model usage, token consumption, latency metrics, and custom metadata (theme, tone, style, length).
+
 ## Commands
 
 **Generate a quote:**
@@ -57,11 +59,13 @@ src/
 ├── config.ts              # Constants (file paths)
 ├── config/
 │   └── quote-variety.ts       # Quote variety configuration (themes, tones, styles, lengths)
+├── instrumentation.ts     # LangFuse OpenTelemetry tracing setup
 ├── types/quote.ts         # TypeScript interfaces
 ├── services/
-│   ├── generator.ts           # AI quote generation with variety system (Gemini 2.5 Flash)
+│   ├── generator.ts           # AI quote generation with variety system (Gemini 2.5 Flash) + LangFuse telemetry
 │   ├── json-storage.ts        # JSON read/write/replace operations
 │   └── markdown-storage.ts    # Markdown file creation/deletion (supports optional baseDir override)
+└── update-quote.ts        # Main script with LangFuse tracing wrapper
 tests/
 └── services/              # Service-layer tests
     ├── json-storage.test.ts   # JSON storage tests (14 test cases)
@@ -97,6 +101,25 @@ day will replace the existing quote rather than skip or append.
 - Model: `gemini-2.5-flash` for creative quote generation
 - Schema validation with Zod ensures quotes have both `title` and `text`
 - Configured via `GOOGLE_GENERATIVE_AI_API_KEY` environment variable
+
+**LangFuse Observability** (`instrumentation.ts`):
+
+The project integrates LangFuse for comprehensive AI observability using OpenTelemetry:
+
+- **Tracing Setup**: Uses `@langfuse/otel` with `LangfuseSpanProcessor` and `NodeTracerProvider`
+- **Observation Wrapping**: Main function wrapped with `observe()` from `@langfuse/tracing` for automatic trace creation
+- **Active Updates**: Uses `updateActiveTrace()` and `updateActiveObservation()` to enrich traces with metadata
+- **AI SDK Telemetry**: Vercel AI SDK's `experimental_telemetry` enabled with `isEnabled: true` and custom metadata
+- **Flush Handling**: Ensures proper span flushing via `forceFlush()` before shutdown (critical for short-lived environments)
+- **Environment Variables**: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST`
+
+**Tracked Metrics**:
+- Trace name: `generate-daily-quote`
+- Tags: `quote-generation`, `daily-automation`
+- Input metadata: theme, tone, style, length (from variety system)
+- Output: generated title, text, date, file path
+- Custom attributes: whether quote is a replacement, markdown file paths
+- AI SDK metrics: model usage, token consumption, latency
 
 **Quote Variety System** (`config/quote-variety.ts`):
 
@@ -162,13 +185,29 @@ date: "2025-10-06"
 
 ## Configuration
 
-Set `GOOGLE_GENERATIVE_AI_API_KEY` in `.env`:
+Required environment variables in `.env`:
 
 ```bash
+# Google AI API key for Gemini model
 GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
+
+# LangFuse observability credentials
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_HOST=https://cloud.langfuse.com  # EU region (default)
+# LANGFUSE_HOST=https://us.cloud.langfuse.com  # US region alternative
+
+# Optional: Enable LangFuse debug logging
+LANGFUSE_DEBUG=true
 ```
 
-For GitHub Actions, add the key as a repository secret.
+**For GitHub Actions**, add these secrets to repository settings:
+- `GOOGLE_GENERATIVE_AI_API_KEY`
+- `LANGFUSE_PUBLIC_KEY`
+- `LANGFUSE_SECRET_KEY`
+- `LANGFUSE_HOST`
+
+Get LangFuse keys from: https://cloud.langfuse.com (project settings)
 
 ## Code Quality
 
