@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/ruchernchong/quotely/compare/v1.0.0...v1.0.1) (2025-10-06)
+
+
+### Bug Fixes
+
+* replace use of Math.random() with crypto ([6d21cd5](https://github.com/ruchernchong/quotely/commit/6d21cd5584eaacf57ef0b7f00ea6bc04b955f01d))
+
 # 1.0.0 (2025-10-06)
 
 
