@@ -55,9 +55,11 @@ bun run check
 ```
 src/
 ├── config.ts              # Constants (file paths)
+├── config/
+│   └── quote-variety.ts       # Quote variety configuration (themes, tones, styles, lengths)
 ├── types/quote.ts         # TypeScript interfaces
 ├── services/
-│   ├── generator.ts           # AI quote generation (Gemini 2.5 Flash)
+│   ├── generator.ts           # AI quote generation with variety system (Gemini 2.5 Flash)
 │   ├── json-storage.ts        # JSON read/write/replace operations
 │   └── markdown-storage.ts    # Markdown file creation/deletion (supports optional baseDir override)
 tests/
@@ -72,7 +74,12 @@ tests/
 ### Data Flow
 
 1. **Generate**: `services/generator.ts` uses Vercel AI SDK with `generateObject()` to create structured quotes (title +
-   text) via Gemini 2.5 Flash
+   text) via Gemini 2.5 Flash with dynamic variety system
+   - Randomly selects from 20 themes (career, creativity, courage, purpose, etc.)
+   - Randomly selects from 12 tones (poetic, raw, humorous, philosophical, etc.)
+   - Randomly selects from 10 styles (metaphorical, question-based, paradoxical, etc.)
+   - Randomly selects from 3 length ranges (brief, standard, expansive)
+   - Creates unique, context-rich prompts for each generation (7,200 possible combinations)
 2. **Check for duplicates**: `services/json-storage.ts` checks if a quote already exists for today's date
 3. **Store/Replace JSON**: Either appends new quote or replaces existing quote in `quotes.json` array
 4. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
@@ -90,6 +97,29 @@ day will replace the existing quote rather than skip or append.
 - Model: `gemini-2.5-flash` for creative quote generation
 - Schema validation with Zod ensures quotes have both `title` and `text`
 - Configured via `GOOGLE_GENERATIVE_AI_API_KEY` environment variable
+
+**Quote Variety System** (`config/quote-variety.ts`):
+
+The variety system ensures each generated quote is unique and diverse by randomly combining:
+
+- **20 Themes**: career and ambition, relationships and connection, creativity and innovation, resilience and
+  perseverance, adventure and exploration, mindfulness and presence, courage and fear, wisdom and learning, health and
+  vitality, change and transformation, purpose and meaning, authenticity and self-expression, leadership and influence,
+  gratitude and appreciation, failure and growth, time and mortality, solitude and reflection, passion and enthusiasm,
+  discipline and consistency, freedom and independence
+
+- **12 Tones**: powerful and commanding, gentle and nurturing, humorous and playful, philosophical and contemplative,
+  poetic and lyrical, raw and honest, practical and straightforward, provocative and challenging, warm and encouraging,
+  mysterious and enigmatic, rebellious and unconventional, serene and peaceful
+
+- **10 Styles**: metaphorical (using nature, journey, or object metaphors), storytelling (brief narrative or parable),
+  direct advice (clear actionable wisdom), question-based (posing thought-provoking questions), paradoxical (embracing
+  contradictions), contrarian (challenging common beliefs), observational (keen insights about human nature), comparative
+  (contrasting two concepts), imperative (strong calls to action), reflective (looking inward)
+
+- **3 Lengths**: brief (20-40 words), standard (40-70 words), expansive (70-100 words)
+
+This creates **7,200 possible combinations**, preventing repetitive quotes and ensuring fresh, creative content daily.
 
 ### Storage Patterns
 
