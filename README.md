@@ -43,7 +43,7 @@ bun run src/update-quote.ts
 2. **Check**: Detects if a quote already exists for today's date
 3. **Store/Replace**:
     - **New quote**: Adds to `quotes.json` and creates new markdown file
-    - **Existing quote**: Replaces entry in `quotes.json` and updates markdown file
+    - **Existing quote**: Replaces entry in `quotes.json` and updates markdown file (deletes all files matching date pattern first)
     - Files stored at `quotes/yyyy/mm/dd-title-slug.md`
 4. **Automate**: GitHub Actions runs daily to generate and commit quotes (always creates a commit for daily activity)
 

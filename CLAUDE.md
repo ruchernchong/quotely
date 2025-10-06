@@ -76,7 +76,7 @@ tests/
 2. **Check for duplicates**: `services/json-storage.ts` checks if a quote already exists for today's date
 3. **Store/Replace JSON**: Either appends new quote or replaces existing quote in `quotes.json` array
 4. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
-   (deletes old file first if replacing)
+   (when replacing, deletes all markdown files matching the date pattern first, e.g., all `06-*.md` files)
 5. **Automate**: GitHub Action (`.github/workflows/update-quote.yml`) runs on schedule, executes the script, and commits
    changes
 
@@ -127,8 +127,8 @@ date: "2025-10-06"
 
 **Markdown Storage Functions**:
 
-- `saveQuoteToMarkdown(quote, date, options?)` - Create markdown file
-- `deleteQuoteMarkdown(quote, options?)` - Delete markdown file (used when replacing)
+- `saveQuoteToMarkdown(quote, date, options?)` - Create markdown file with title-slug in filename
+- `deleteQuoteMarkdown(quote, options?)` - Delete all markdown files matching the date (e.g., `06-*.md`) to support replacement even when titles change
 
 ## Configuration
 

@@ -1,4 +1,4 @@
-import { mkdir, unlink } from "node:fs/promises";
+import { mkdir, readdir, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "date-fns";
 import slugify from "slugify";
@@ -61,12 +61,24 @@ export const deleteQuoteMarkdown = async (
   options?: SaveQuoteOptions,
 ): Promise<void> => {
   const baseDir = options?.baseDir ?? QUOTES_DIR;
-  const filePath = getMarkdownFilePath(quote, baseDir);
+  const timestamp = new Date(quote.timestamp);
+  const year = format(timestamp, "yyyy");
+  const month = format(timestamp, "MM");
+  const day = format(timestamp, "dd");
+  const dirPath = join(baseDir, year, month);
 
   try {
-    await unlink(filePath);
+    const files = await readdir(dirPath);
+    const datePrefix = `${day}-`;
+
+    // Delete all files matching the date pattern
+    for (const file of files) {
+      if (file.startsWith(datePrefix) && file.endsWith(".md")) {
+        await unlink(join(dirPath, file));
+      }
+    }
   } catch (error) {
-    // Ignore if file doesn't exist
+    // Ignore if directory doesn't exist
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
       throw error;
     }
