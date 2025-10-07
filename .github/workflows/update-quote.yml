@@ -12,8 +12,10 @@ jobs:
   update-quote:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Generate daily quote
+        uses: ./
         with:
           google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
           langfuse-public-key: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
