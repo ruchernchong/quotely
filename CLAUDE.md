@@ -218,7 +218,7 @@ LANGFUSE_DEBUG=true
 The `action.yml` composite action accepts the following inputs:
 
 **Required:**
-- `google-api-key` - Google Generative AI API key for Gemini model
+- `google-generative-ai-api-key` - Google Generative AI API key for Gemini model
 
 **Optional:**
 - `langfuse-public-key` - LangFuse public key for observability
@@ -231,7 +231,7 @@ The `action.yml` composite action accepts the following inputs:
 ```yaml
 - uses: ruchernchong/quotely@v1
   with:
-    google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+    google-generative-ai-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
     # Optional LangFuse credentials
     langfuse-public-key: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
     langfuse-secret-key: ${{ secrets.LANGFUSE_SECRET_KEY }}

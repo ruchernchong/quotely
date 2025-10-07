@@ -3,7 +3,7 @@ description: 'AI-powered motivational quote generator with automated storage and
 author: 'ruchernchong'
 
 inputs:
-  google-api-key:
+  google-generative-ai-api-key:
     description: 'Google Generative AI API key for Gemini model'
     required: true
   langfuse-public-key:
@@ -36,7 +36,7 @@ runs:
       shell: bash
       run: bun run src/generate-quote.ts
       env:
-        GOOGLE_GENERATIVE_AI_API_KEY: ${{ inputs.google-api-key }}
+        GOOGLE_GENERATIVE_AI_API_KEY: ${{ inputs.google-generative-ai-api-key }}
         LANGFUSE_PUBLIC_KEY: ${{ inputs.langfuse-public-key }}
         LANGFUSE_SECRET_KEY: ${{ inputs.langfuse-secret-key }}
         LANGFUSE_HOST: ${{ inputs.langfuse-host }}

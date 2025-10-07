@@ -17,7 +17,7 @@ jobs:
       - name: Generate daily quote
         uses: ./
         with:
-          google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          google-generative-ai-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
           langfuse-public-key: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           langfuse-secret-key: ${{ secrets.LANGFUSE_SECRET_KEY }}
           langfuse-host: ${{ secrets.LANGFUSE_HOST }}

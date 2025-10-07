@@ -25,7 +25,7 @@ Add to your workflow:
 ```yaml
 - uses: ruchernchong/quotely@v1
   with:
-    google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+    google-generative-ai-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
 ```
 
 **Required secrets** (add to repository Settings → Secrets and variables → Actions):
@@ -184,7 +184,7 @@ This project is available as a **reusable GitHub composite action**. The action 
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `google-api-key` | ✅ Yes | - | Google Generative AI API key |
+| `google-generative-ai-api-key` | ✅ Yes | - | Google Generative AI API key |
 | `langfuse-public-key` | ❌ No | - | LangFuse public key (optional) |
 | `langfuse-secret-key` | ❌ No | - | LangFuse secret key (optional) |
 | `langfuse-host` | ❌ No | - | LangFuse host URL (optional) |
@@ -209,7 +209,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruchernchong/quotely@v1
         with:
-          google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          google-generative-ai-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
           langfuse-public-key: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           langfuse-secret-key: ${{ secrets.LANGFUSE_SECRET_KEY }}
           langfuse-host: ${{ secrets.LANGFUSE_HOST }}
@@ -228,7 +228,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruchernchong/quotely@v1
         with:
-          google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          google-generative-ai-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
           auto-commit: 'false'
 ```
 
