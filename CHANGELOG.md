@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/ruchernchong/quotely/compare/v1.0.1...v1.1.0) (2025-10-07)
+
+
+### Features
+
+* convert to GitHub composite action ([f4ed475](https://github.com/ruchernchong/quotely/commit/f4ed475ee1de2af13d286718b4c5ee4325216277))
+
 ## [1.0.1](https://github.com/ruchernchong/quotely/compare/v1.0.0...v1.0.1) (2025-10-06)
 
 
