@@ -9,9 +9,7 @@ export function startTracing(): void {
     return;
   }
 
-  langfuseSpanProcessor = new LangfuseSpanProcessor({
-    debug: process.env.LANGFUSE_DEBUG === "true",
-  });
+  langfuseSpanProcessor = new LangfuseSpanProcessor();
 
   tracerProvider = new NodeTracerProvider({
     spanProcessors: [langfuseSpanProcessor],

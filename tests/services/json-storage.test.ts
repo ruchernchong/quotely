@@ -174,8 +174,8 @@ describe("json-storage", () => {
 
     const updatedQuotes = await storage.loadQuotes();
     expect(updatedQuotes).toHaveLength(1);
-    expect(updatedQuotes[0].title).toBe("New Quote");
-    expect(updatedQuotes[0].text).toBe("New text");
+    expect(updatedQuotes[0]?.title).toBe("New Quote");
+    expect(updatedQuotes[0]?.text).toBe("New text");
   });
 
   it("should return undefined when replacing quote for non-existent date", async () => {
@@ -203,6 +203,6 @@ describe("json-storage", () => {
 
     const updatedQuotes = await storage.loadQuotes();
     expect(updatedQuotes).toHaveLength(1);
-    expect(updatedQuotes[0].title).toBe("Test Quote");
+    expect(updatedQuotes[0]?.title).toBe("Test Quote");
   });
 });

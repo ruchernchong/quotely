@@ -62,7 +62,12 @@ export const getRandomElement = <T>(array: readonly T[]): T => {
     throw new RangeError("getRandomElement requires a non-empty array");
   }
 
-  return array[randomInt(array.length)];
+  const element = array[randomInt(array.length)];
+  if (element === undefined) {
+    throw new RangeError("Failed to retrieve element from array");
+  }
+
+  return element;
 };
 
 export interface QuoteVariety {

@@ -15,14 +15,12 @@ export class JsonStorage {
     }
 
     const jsonFile = Bun.file(this.filePath);
-    if (await jsonFile.exists()) {
-      const content = await jsonFile.text();
-      this.quotesCache = JSON.parse(content);
-      return this.quotesCache;
-    }
+    const quotes: Quote[] = (await jsonFile.exists())
+      ? JSON.parse(await jsonFile.text())
+      : [];
 
-    this.quotesCache = [];
-    return this.quotesCache;
+    this.quotesCache = quotes;
+    return quotes;
   }
 
   async saveQuotes(quotes: Quote[]): Promise<void> {
