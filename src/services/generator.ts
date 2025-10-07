@@ -1,19 +1,12 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { google } from "@ai-sdk/google";
 import { updateActiveObservation } from "@langfuse/tracing";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { generateVariety } from "../config/quote-variety.ts";
 import type { GeneratedQuote } from "../types/quote.ts";
+import { readMarkdown } from "../utils/read-markdown.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const promptTemplate = readFileSync(
-  join(__dirname, "../prompts/generate-quote.md"),
-  "utf-8",
-);
+const promptTemplate = readMarkdown("generate-quote.md", import.meta.url);
 
 export const generateQuote = async (): Promise<GeneratedQuote> => {
   const variety = generateVariety();

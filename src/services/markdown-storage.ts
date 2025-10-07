@@ -1,18 +1,12 @@
-import { readFileSync } from "node:fs";
 import { mkdir, readdir, unlink } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { format } from "date-fns";
 import slugify from "slugify";
 import { QUOTES_DIR } from "../config.ts";
 import type { Quote } from "../types/quote.ts";
+import { readMarkdown } from "../utils/read-markdown.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const quoteTemplate = readFileSync(
-  join(__dirname, "../prompts/quote-template.md"),
-  "utf-8",
-);
+const quoteTemplate = readMarkdown("quote-template.md", import.meta.url);
 
 export class MarkdownStorage {
   private readonly baseDir: string;
