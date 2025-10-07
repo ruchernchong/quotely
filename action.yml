@@ -34,7 +34,7 @@ runs:
 
     - name: Generate quote
       shell: bash
-      run: bun run src/update-quote.ts
+      run: bun run src/generate-quote.ts
       env:
         GOOGLE_GENERATIVE_AI_API_KEY: ${{ inputs.google-api-key }}
         LANGFUSE_PUBLIC_KEY: ${{ inputs.langfuse-public-key }}

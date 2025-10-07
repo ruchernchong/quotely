@@ -21,7 +21,7 @@ length).
 **Generate a quote:**
 
 ```bash
-bun run src/update-quote.ts
+bun run src/generate-quote.ts
 ```
 
 **Install dependencies:**
@@ -68,13 +68,13 @@ src/
 │   ├── generator.ts           # AI quote generation with variety system (Gemini 2.5 Flash) + LangFuse telemetry
 │   ├── json-storage.ts        # JSON read/write/replace operations
 │   └── markdown-storage.ts    # Markdown file creation/deletion (supports optional baseDir override)
-└── update-quote.ts        # Main script with LangFuse tracing wrapper
+└── generate-quote.ts      # Main script with LangFuse tracing wrapper
 tests/
 └── services/              # Service-layer tests
     ├── json-storage.test.ts   # JSON storage tests (14 test cases)
     └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
 .github/workflows/
-├── update-quote.yml       # Daily quote generation workflow (uses composite action)
+├── generate-quote.yml     # Daily quote generation workflow (uses composite action)
 └── release.yml           # Semantic release workflow
 ```
 
@@ -94,7 +94,7 @@ tests/
 3. **Store/Replace JSON**: Either appends new quote or replaces existing quote in `quotes.json` array
 4. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
    (when replacing, deletes all markdown files matching the date pattern first, e.g., all `06-*.md` files)
-5. **Automate**: GitHub composite action encapsulates the entire workflow; `.github/workflows/update-quote.yml` uses the
+5. **Automate**: GitHub composite action encapsulates the entire workflow; `.github/workflows/generate-quote.yml` uses the
    action to run on schedule and commit changes
 
 **Duplicate Handling**: The script automatically replaces quotes for the current date instead of creating duplicates. This

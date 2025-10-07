@@ -61,7 +61,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 **3. Generate a quote:**
 
 ```bash
-bun run src/update-quote.ts
+bun run src/generate-quote.ts
 ```
 
 ## 📁 How It Works
@@ -91,7 +91,7 @@ src/
 │   ├── generator.ts           # AI quote generation with variety + telemetry
 │   ├── json-storage.ts        # JSON read/write/replace operations
 │   └── markdown-storage.ts    # Markdown create/delete operations
-└── update-quote.ts        # Main script with LangFuse tracing
+└── generate-quote.ts      # Main script with LangFuse tracing
 tests/
 └── services/              # Service-layer tests (14 test cases)
     ├── json-storage.test.ts   # JSON storage & replacement tests
@@ -195,13 +195,13 @@ This project is available as a **reusable GitHub composite action**. The action 
 **Daily automated quotes:**
 
 ```yaml
-name: Update Quote
+name: Generate Quote
 on:
   schedule:
     - cron: "0 0 * * *"  # Daily at midnight UTC
 
 jobs:
-  update-quote:
+  generate-quote:
     runs-on: ubuntu-latest
     permissions:
       contents: write
