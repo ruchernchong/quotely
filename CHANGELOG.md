@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/ruchernchong/quotely/compare/v1.1.0...v1.1.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* resolve TypeScript strict type errors ([be33174](https://github.com/ruchernchong/quotely/commit/be33174bfb36b105717ec03c03d94ddc45662d12))
+* use length.name instead of description ([ec1bda7](https://github.com/ruchernchong/quotely/commit/ec1bda7b56c4e45294ba01711fb0bc8290195b44))
+
 # [1.1.0](https://github.com/ruchernchong/quotely/compare/v1.0.1...v1.1.0) (2025-10-07)
 
 
