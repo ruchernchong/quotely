@@ -11,38 +11,54 @@ inspirational quotes with AI-generated titles.
 - 💾 Dual storage: JSON + organized Markdown files
 - 📅 Automatic organization by date (`quotes/yyyy/mm/`)
 - 🔄 Smart duplicate handling - replaces quotes for same day
-- 📊 **LangFuse observability** - Comprehensive AI tracing, metrics, and analytics
-- ⚙️ GitHub Actions automation with daily commits
+- 📊 **LangFuse observability** - Optional AI tracing, metrics, and analytics
+- 🚀 **GitHub composite action** - Reusable across workflows and repositories
+- ⚙️ Automated daily commits via GitHub Actions
 - 🎯 Modular, maintainable architecture
 
-## 🚀 Setup
+## 🚀 Quick Start
 
-### 1. Install Dependencies
+### Option 1: Use as GitHub Action (Recommended)
+
+Add to your workflow:
+
+```yaml
+- uses: ruchernchong/quotely@v1
+  with:
+    google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+```
+
+**Required secrets** (add to repository Settings → Secrets and variables → Actions):
+- `GOOGLE_GENERATIVE_AI_API_KEY` - Get from [Google AI Studio](https://aistudio.google.com/apikey)
+
+**Optional secrets** (for AI observability):
+- `LANGFUSE_PUBLIC_KEY` - Get from [LangFuse](https://cloud.langfuse.com)
+- `LANGFUSE_SECRET_KEY`
+- `LANGFUSE_HOST` (defaults to `https://cloud.langfuse.com`)
+
+### Option 2: Run Locally
+
+**1. Install dependencies:**
 
 ```bash
 bun install
 ```
 
-### 2. Configure Environment Variables
+**2. Configure environment:**
 
-Create a `.env` file with the following:
+Create a `.env` file:
 
 ```bash
-# Required: Google AI API key
+# Required
 GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
 
-# Optional: LangFuse observability (for AI tracing and analytics)
+# Optional (for AI observability)
 LANGFUSE_PUBLIC_KEY=pk-lf-...
 LANGFUSE_SECRET_KEY=sk-lf-...
 LANGFUSE_HOST=https://cloud.langfuse.com
 ```
 
-**Get your keys:**
-
-- Google AI: [Google AI Studio](https://aistudio.google.com/apikey)
-- LangFuse: [LangFuse Project Settings](https://cloud.langfuse.com) (optional, for observability)
-
-### 3. Generate a Quote
+**3. Generate a quote:**
 
 ```bash
 bun run src/update-quote.ts
@@ -60,7 +76,7 @@ bun run src/update-quote.ts
     - **Existing quote**: Replaces entry in `quotes.json` and updates markdown file (deletes all files matching date
       pattern first)
     - Files stored at `quotes/yyyy/mm/dd-title-slug.md`
-4. **Automate**: GitHub Actions runs daily to generate and commit quotes (always creates a commit for daily activity)
+4. **Automate**: GitHub Actions runs daily to generate and commit quotes
 
 ## 🏗️ Project Structure
 
@@ -154,29 +170,77 @@ This project uses [Husky](https://typicode.github.io/husky/) to enforce code qua
 - **pre-commit**: Automatically runs Biome on staged files
 - **commit-msg**: Validates commit messages follow [Conventional Commits](https://conventionalcommits.org/) format
 
-## 🤖 GitHub Actions
+## 🤖 GitHub Action Usage
 
-The workflow (`.github/workflows/update-quote.yml`) runs automatically:
+### Composite Action
 
-- **Schedule**: Daily at midnight UTC (`0 0 * * *`)
-- **Manual**: Can be triggered via workflow_dispatch
+This project is available as a **reusable GitHub composite action**. The action encapsulates:
+- Bun runtime setup
+- Dependency installation
+- Quote generation with AI
+- Optional automatic commits
 
-**Setup:**
+### Action Inputs
 
-Add these secrets to your repository (Settings → Secrets and variables → Actions):
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `google-api-key` | ✅ Yes | - | Google Generative AI API key |
+| `langfuse-public-key` | ❌ No | - | LangFuse public key (optional) |
+| `langfuse-secret-key` | ❌ No | - | LangFuse secret key (optional) |
+| `langfuse-host` | ❌ No | - | LangFuse host URL (optional) |
+| `auto-commit` | ❌ No | `'true'` | Auto-commit and push changes |
 
-1. `GOOGLE_GENERATIVE_AI_API_KEY` - Required for AI generation
-2. `LANGFUSE_PUBLIC_KEY` - Optional, for observability
-3. `LANGFUSE_SECRET_KEY` - Optional, for observability
-4. `LANGFUSE_HOST` - Optional, defaults to EU region
+### Example Workflows
 
-**Behavior:**
+**Daily automated quotes:**
 
-- First run of the day: Creates new quote and commits
-- Subsequent runs: Replaces existing quote and commits (ensures daily GitHub activity)
-- Each run always creates a commit, maintaining consistent contribution graph
+```yaml
+name: Update Quote
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Daily at midnight UTC
 
-A separate workflow (`.github/workflows/release.yml`) runs on pushes to `main`, running the tests and `semantic-release` before creating releases.
+jobs:
+  update-quote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruchernchong/quotely@v1
+        with:
+          google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          langfuse-public-key: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          langfuse-secret-key: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          langfuse-host: ${{ secrets.LANGFUSE_HOST }}
+```
+
+**Manual trigger without commits:**
+
+```yaml
+name: Generate Quote (No Commit)
+on: workflow_dispatch
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruchernchong/quotely@v1
+        with:
+          google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          auto-commit: 'false'
+```
+
+### Workflow Behavior
+
+- **First run of the day**: Creates new quote and commits
+- **Subsequent runs**: Replaces existing quote and commits
+- **Auto-commit enabled**: Each run creates a commit with message `chore: update quote [skip ci]`
+
+**Additional workflows:**
+
+A separate workflow (`.github/workflows/release.yml`) runs on pushes to `main`, executing tests and `semantic-release` before creating releases.
 
 ## 📦 Releases
 

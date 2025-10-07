@@ -10,10 +10,10 @@ two formats:
 - **JSON**: All quotes in `quotes.json` with metadata (title, text, date, timestamp)
 - **Markdown**: Individual files organized by date in `quotes/yyyy/mm/dd-title-slug.md`
 
-A GitHub Action runs automatically to generate and commit new quotes.
+The project is packaged as a **GitHub composite action** (`action.yml`) that can be used in any workflow or repository.
 
-**Observability**: The project uses LangFuse for AI observability and analytics, tracking all quote generations with
-detailed telemetry including model usage, token consumption, latency metrics, and custom metadata (theme, tone, style,
+**Observability**: The project uses LangFuse for AI observability and analytics (optional), tracking all quote generations
+with detailed telemetry including model usage, token consumption, latency metrics, and custom metadata (theme, tone, style,
 length).
 
 ## Commands
@@ -57,6 +57,7 @@ bun run check
 ### Modular Structure
 
 ```
+action.yml                 # GitHub composite action definition
 src/
 ├── config.ts              # Constants (file paths)
 ├── config/
@@ -72,6 +73,9 @@ tests/
 └── services/              # Service-layer tests
     ├── json-storage.test.ts   # JSON storage tests (14 test cases)
     └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
+.github/workflows/
+├── update-quote.yml       # Daily quote generation workflow (uses composite action)
+└── release.yml           # Semantic release workflow
 ```
 
 **Note**: Utility functions (date formatting, slugification) are now handled by external packages (`date-fns`,
@@ -90,13 +94,12 @@ tests/
 3. **Store/Replace JSON**: Either appends new quote or replaces existing quote in `quotes.json` array
 4. **Store Markdown**: `services/markdown-storage.ts` creates `quotes/yyyy/mm/dd-title-slug.md` with formatted content
    (when replacing, deletes all markdown files matching the date pattern first, e.g., all `06-*.md` files)
-5. **Automate**: GitHub Action (`.github/workflows/update-quote.yml`) runs on schedule, executes the script, and commits
-   changes
+5. **Automate**: GitHub composite action encapsulates the entire workflow; `.github/workflows/update-quote.yml` uses the
+   action to run on schedule and commit changes
 
-**Duplicate Handling**: The script automatically replaces quotes for the current date instead of creating duplicates.
-This
-ensures daily GitHub activity (commits) while maintaining data integrity. Running the script multiple times on the same
-day will replace the existing quote rather than skip or append.
+**Duplicate Handling**: The script automatically replaces quotes for the current date instead of creating duplicates. This
+maintains data integrity while ensuring consistent behavior. Running the script multiple times on the same day will replace
+the existing quote rather than skip or append.
 
 ### AI Integration
 
@@ -192,13 +195,15 @@ date: "2025-10-06"
 
 ## Configuration
 
+### Local Development
+
 Required environment variables in `.env`:
 
 ```bash
-# Google AI API key for Gemini model
+# Required: Google AI API key for Gemini model
 GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
 
-# LangFuse observability credentials
+# Optional: LangFuse observability credentials
 LANGFUSE_PUBLIC_KEY=pk-lf-...
 LANGFUSE_SECRET_KEY=sk-lf-...
 LANGFUSE_HOST=https://cloud.langfuse.com  # EU region (default)
@@ -208,14 +213,43 @@ LANGFUSE_HOST=https://cloud.langfuse.com  # EU region (default)
 LANGFUSE_DEBUG=true
 ```
 
-**For GitHub Actions**, add these secrets to repository settings:
+### GitHub Composite Action
 
-- `GOOGLE_GENERATIVE_AI_API_KEY`
-- `LANGFUSE_PUBLIC_KEY`
-- `LANGFUSE_SECRET_KEY`
-- `LANGFUSE_HOST`
+The `action.yml` composite action accepts the following inputs:
 
-Get LangFuse keys from: https://cloud.langfuse.com (project settings)
+**Required:**
+- `google-api-key` - Google Generative AI API key for Gemini model
+
+**Optional:**
+- `langfuse-public-key` - LangFuse public key for observability
+- `langfuse-secret-key` - LangFuse secret key for observability
+- `langfuse-host` - LangFuse host URL (e.g., https://cloud.langfuse.com)
+- `auto-commit` - Automatically commit and push changes (default: `'true'`)
+
+**Usage in workflows:**
+
+```yaml
+- uses: ruchernchong/quotely@v1
+  with:
+    google-api-key: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+    # Optional LangFuse credentials
+    langfuse-public-key: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+    langfuse-secret-key: ${{ secrets.LANGFUSE_SECRET_KEY }}
+    langfuse-host: ${{ secrets.LANGFUSE_HOST }}
+    # Optional: disable auto-commit
+    auto-commit: 'false'
+```
+
+**For GitHub Actions secrets**, add these to repository settings (Settings → Secrets and variables → Actions):
+
+- `GOOGLE_GENERATIVE_AI_API_KEY` (required)
+- `LANGFUSE_PUBLIC_KEY` (optional)
+- `LANGFUSE_SECRET_KEY` (optional)
+- `LANGFUSE_HOST` (optional)
+
+Get API keys from:
+- Google AI: https://aistudio.google.com/apikey
+- LangFuse: https://cloud.langfuse.com (project settings)
 
 ## Code Quality
 

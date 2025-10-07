@@ -1,0 +1,60 @@
+name: 'Generate Daily Quote'
+description: 'AI-powered motivational quote generator with automated storage and optional LangFuse observability'
+author: 'ruchernchong'
+
+inputs:
+  google-api-key:
+    description: 'Google Generative AI API key for Gemini model'
+    required: true
+  langfuse-public-key:
+    description: 'LangFuse public key for observability (optional)'
+    required: false
+  langfuse-secret-key:
+    description: 'LangFuse secret key for observability (optional)'
+    required: false
+  langfuse-host:
+    description: 'LangFuse host URL (optional, e.g., https://cloud.langfuse.com)'
+    required: false
+  auto-commit:
+    description: 'Automatically commit and push changes to the repository'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: 'latest'
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install
+
+    - name: Generate quote
+      shell: bash
+      run: bun run src/update-quote.ts
+      env:
+        GOOGLE_GENERATIVE_AI_API_KEY: ${{ inputs.google-api-key }}
+        LANGFUSE_PUBLIC_KEY: ${{ inputs.langfuse-public-key }}
+        LANGFUSE_SECRET_KEY: ${{ inputs.langfuse-secret-key }}
+        LANGFUSE_HOST: ${{ inputs.langfuse-host }}
+
+    - name: Commit and push changes
+      if: inputs.auto-commit == 'true'
+      shell: bash
+      run: |
+        if [[ -n "$(git status --porcelain)" ]]; then
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add quotes.json quotes/
+          git commit -m "chore: update quote [skip ci]"
+          git push
+        else
+          echo "No changes to commit."
+        fi
+
+branding:
+  icon: 'message-circle'
+  color: 'black'
