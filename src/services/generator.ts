@@ -30,7 +30,7 @@ export const generateQuote = async (): Promise<GeneratedQuote> => {
       theme: variety.theme,
       tone: variety.tone,
       style: variety.style,
-      length: variety.length.description,
+      length: variety.length.name,
     },
   });
 
@@ -56,7 +56,7 @@ export const generateQuote = async (): Promise<GeneratedQuote> => {
         theme: variety.theme,
         tone: variety.tone,
         style: variety.style,
-        length: variety.length.description,
+        length: variety.length.name,
       },
     },
   });
