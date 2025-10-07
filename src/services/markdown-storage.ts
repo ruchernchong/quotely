@@ -6,7 +6,11 @@ import { QUOTES_DIR } from "@/config";
 import type { Quote } from "@/types/quote";
 import { readMarkdown } from "@/utils/read-markdown";
 
-const quoteTemplate = readMarkdown("quote-template.md", import.meta.url);
+const quoteTemplate = readMarkdown({
+  filename: "quote-frontmatter.md",
+  importMetaUrl: import.meta.url,
+  directory: "templates",
+});
 
 export class MarkdownStorage {
   private readonly baseDir: string;

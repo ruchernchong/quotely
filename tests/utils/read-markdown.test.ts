@@ -5,7 +5,10 @@ import { readMarkdown } from "@/utils/read-markdown";
 
 describe("readMarkdown", () => {
   it("should read markdown file from prompts directory", () => {
-    const content = readMarkdown("test-template.md", import.meta.url);
+    const content = readMarkdown({
+      filename: "test-template.md",
+      importMetaUrl: import.meta.url,
+    });
 
     expect(content).toBeTruthy();
     expect(typeof content).toBe("string");
@@ -13,7 +16,10 @@ describe("readMarkdown", () => {
   });
 
   it("should read file with template placeholders", () => {
-    const content = readMarkdown("test-template.md", import.meta.url);
+    const content = readMarkdown({
+      filename: "test-template.md",
+      importMetaUrl: import.meta.url,
+    });
 
     expect(content).toContain("{{title}}");
     expect(content).toContain("{{date}}");
@@ -22,22 +28,28 @@ describe("readMarkdown", () => {
 
   it("should throw error when file doesn't exist", () => {
     expect(() => {
-      readMarkdown("non-existent.md", import.meta.url);
+      readMarkdown({
+        filename: "non-existent.md",
+        importMetaUrl: import.meta.url,
+      });
     }).toThrow();
   });
 
   it("should read file with correct encoding", () => {
-    const content = readMarkdown("test-template.md", import.meta.url);
+    const content = readMarkdown({
+      filename: "test-template.md",
+      importMetaUrl: import.meta.url,
+    });
 
     // Should not contain encoding artifacts
     expect(content).not.toContain("�");
   });
 
-  it("should work with production quote-template.md", () => {
+  it("should work with production quote-frontmatter.md", () => {
     // Verify the actual production file works
     const projectRoot = join(import.meta.dir, "../..");
     const quoteTemplate = readFileSync(
-      join(projectRoot, "src/prompts/quote-template.md"),
+      join(projectRoot, "src/templates/quote-frontmatter.md"),
       "utf-8",
     );
 

@@ -6,7 +6,10 @@ import { generateVariety } from "@/config/quote-variety";
 import type { GeneratedQuote } from "@/types/quote";
 import { readMarkdown } from "@/utils/read-markdown";
 
-const promptTemplate = readMarkdown("generate-quote.md", import.meta.url);
+const promptTemplate = readMarkdown({
+  filename: "generate-quote.md",
+  importMetaUrl: import.meta.url,
+});
 
 export const generateQuote = async (): Promise<GeneratedQuote> => {
   const variety = generateVariety();
