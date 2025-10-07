@@ -2,9 +2,9 @@ import { mkdir, readdir, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "date-fns";
 import slugify from "slugify";
-import { QUOTES_DIR } from "../config.ts";
-import type { Quote } from "../types/quote.ts";
-import { readMarkdown } from "../utils/read-markdown.ts";
+import { QUOTES_DIR } from "@/config";
+import type { Quote } from "@/types/quote";
+import { readMarkdown } from "@/utils/read-markdown";
 
 const quoteTemplate = readMarkdown("quote-template.md", import.meta.url);
 

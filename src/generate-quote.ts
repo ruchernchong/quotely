@@ -1,15 +1,15 @@
 import { observe, updateActiveTrace } from "@langfuse/tracing";
 import { format } from "date-fns";
-import { QUOTES_JSON_PATH } from "./config.ts";
+import { QUOTES_JSON_PATH } from "@/config";
 import {
   langfuseSpanProcessor,
   shutdownTracing,
   startTracing,
-} from "./instrumentation.ts";
-import { generateQuote } from "./services/generator.ts";
-import { JsonStorage } from "./services/json-storage.ts";
-import { MarkdownStorage } from "./services/markdown-storage.ts";
-import type { Quote } from "./types/quote.ts";
+} from "@/instrumentation";
+import { generateQuote } from "@/services/generator";
+import { JsonStorage } from "@/services/json-storage";
+import { MarkdownStorage } from "@/services/markdown-storage";
+import type { Quote } from "@/types/quote";
 
 const runQuoteGeneration = observe(
   async (): Promise<void> => {

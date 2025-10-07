@@ -1,5 +1,5 @@
-import { QUOTES_JSON_PATH } from "../config.ts";
-import type { Quote } from "../types/quote.ts";
+import { QUOTES_JSON_PATH } from "@/config";
+import type { Quote } from "@/types/quote";
 
 export class JsonStorage {
   private readonly filePath: string;

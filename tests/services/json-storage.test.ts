@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { JsonStorage } from "../../src/services/json-storage.ts";
-import type { Quote } from "../../src/types/quote.ts";
+import { JsonStorage } from "@/services/json-storage";
+import type { Quote } from "@/types/quote";
 
 describe("json-storage", () => {
   let tempDir: string;

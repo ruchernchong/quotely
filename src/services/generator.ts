@@ -2,9 +2,9 @@ import { google } from "@ai-sdk/google";
 import { updateActiveObservation } from "@langfuse/tracing";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { generateVariety } from "../config/quote-variety.ts";
-import type { GeneratedQuote } from "../types/quote.ts";
-import { readMarkdown } from "../utils/read-markdown.ts";
+import { generateVariety } from "@/config/quote-variety";
+import type { GeneratedQuote } from "@/types/quote";
+import { readMarkdown } from "@/utils/read-markdown";
 
 const promptTemplate = readMarkdown("generate-quote.md", import.meta.url);
 

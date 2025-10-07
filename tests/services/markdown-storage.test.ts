@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { MarkdownStorage } from "../../src/services/markdown-storage.ts";
-import type { Quote } from "../../src/types/quote.ts";
+import { MarkdownStorage } from "@/services/markdown-storage";
+import type { Quote } from "@/types/quote";
 
 describe("markdown-storage", () => {
   let tempQuotesDir: string;
