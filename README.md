@@ -1,5 +1,12 @@
 # Quotely
 
+[![GitHub release](https://img.shields.io/github/v/release/ruchernchong/quotely)](https://github.com/ruchernchong/quotely/releases)
+[![CI](https://github.com/ruchernchong/quotely/actions/workflows/release.yml/badge.svg)](https://github.com/ruchernchong/quotely/actions/workflows/release.yml)
+[![License](https://img.shields.io/github/license/ruchernchong/quotely)](LICENSE)
+[![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=fff)](https://bun.sh)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
+[![Vercel AI SDK](https://img.shields.io/badge/Vercel_AI_SDK-000?logo=vercel&logoColor=fff)](https://sdk.vercel.ai/)
+
 A motivational quote generator built with Bun + TypeScript and Vercel AI SDK. Automatically generates and stores
 inspirational quotes with AI-generated titles.
 
