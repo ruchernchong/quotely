@@ -2,22 +2,18 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import {
-  getQuoteByDate,
-  hasTodaysQuote,
-  loadQuotes,
-  replaceQuoteByDate,
-  saveQuotesToJson,
-} from "../../src/services/json-storage.ts";
+import { JsonStorage } from "../../src/services/json-storage.ts";
 import type { Quote } from "../../src/types/quote.ts";
 
 describe("json-storage", () => {
   let tempDir: string;
   let testJsonPath: string;
+  let storage: JsonStorage;
 
   beforeEach(async () => {
     tempDir = await mkdtemp(join(tmpdir(), "quotely-test-"));
     testJsonPath = join(tempDir, "quotes.json");
+    storage = new JsonStorage(testJsonPath);
   });
 
   afterEach(async () => {
@@ -36,13 +32,13 @@ describe("json-storage", () => {
 
     await Bun.write(testJsonPath, JSON.stringify(quotes));
 
-    const loaded = await loadQuotes({ filePath: testJsonPath });
+    const loaded = await storage.loadQuotes();
 
     expect(loaded).toEqual(quotes);
   });
 
   it("should return empty array when file doesn't exist", async () => {
-    const loaded = await loadQuotes({ filePath: testJsonPath });
+    const loaded = await storage.loadQuotes();
 
     expect(loaded).toEqual([]);
   });
@@ -57,7 +53,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await saveQuotesToJson(quotes, { filePath: testJsonPath });
+    await storage.saveQuotes(quotes);
 
     const file = Bun.file(testJsonPath);
     const content = await file.text();
@@ -78,9 +74,7 @@ describe("json-storage", () => {
 
     await Bun.write(testJsonPath, JSON.stringify(quotes));
 
-    const exists = await hasTodaysQuote("2025-10-05", {
-      filePath: testJsonPath,
-    });
+    const exists = await storage.hasTodayQuote("2025-10-05");
 
     expect(exists).toBe(true);
   });
@@ -97,9 +91,7 @@ describe("json-storage", () => {
 
     await Bun.write(testJsonPath, JSON.stringify(quotes));
 
-    const exists = await hasTodaysQuote("2025-10-06", {
-      filePath: testJsonPath,
-    });
+    const exists = await storage.hasTodayQuote("2025-10-06");
 
     expect(exists).toBe(false);
   });
@@ -109,9 +101,7 @@ describe("json-storage", () => {
 
     await Bun.write(testJsonPath, JSON.stringify(quotes));
 
-    const exists = await hasTodaysQuote("2025-10-05", {
-      filePath: testJsonPath,
-    });
+    const exists = await storage.hasTodayQuote("2025-10-05");
 
     expect(exists).toBe(false);
   });
@@ -134,9 +124,7 @@ describe("json-storage", () => {
 
     await Bun.write(testJsonPath, JSON.stringify(quotes));
 
-    const quote = await getQuoteByDate("2025-10-06", {
-      filePath: testJsonPath,
-    });
+    const quote = await storage.getQuoteByDate("2025-10-06");
 
     expect(quote).toBeDefined();
     expect(quote?.title).toBe("Test Quote 2");
@@ -155,9 +143,7 @@ describe("json-storage", () => {
 
     await Bun.write(testJsonPath, JSON.stringify(quotes));
 
-    const quote = await getQuoteByDate("2025-10-06", {
-      filePath: testJsonPath,
-    });
+    const quote = await storage.getQuoteByDate("2025-10-06");
 
     expect(quote).toBeUndefined();
   });
@@ -181,14 +167,12 @@ describe("json-storage", () => {
       timestamp: "2025-10-05T13:00:00.000Z",
     };
 
-    const oldQuote = await replaceQuoteByDate(newQuote, {
-      filePath: testJsonPath,
-    });
+    const oldQuote = await storage.replaceQuoteByDate(newQuote);
 
     expect(oldQuote).toBeDefined();
     expect(oldQuote?.title).toBe("Old Quote");
 
-    const updatedQuotes = await loadQuotes({ filePath: testJsonPath });
+    const updatedQuotes = await storage.loadQuotes();
     expect(updatedQuotes).toHaveLength(1);
     expect(updatedQuotes[0].title).toBe("New Quote");
     expect(updatedQuotes[0].text).toBe("New text");
@@ -213,13 +197,11 @@ describe("json-storage", () => {
       timestamp: "2025-10-06T12:00:00.000Z",
     };
 
-    const oldQuote = await replaceQuoteByDate(newQuote, {
-      filePath: testJsonPath,
-    });
+    const oldQuote = await storage.replaceQuoteByDate(newQuote);
 
     expect(oldQuote).toBeUndefined();
 
-    const updatedQuotes = await loadQuotes({ filePath: testJsonPath });
+    const updatedQuotes = await storage.loadQuotes();
     expect(updatedQuotes).toHaveLength(1);
     expect(updatedQuotes[0].title).toBe("Test Quote");
   });

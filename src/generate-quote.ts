@@ -7,16 +7,8 @@ import {
   startTracing,
 } from "./instrumentation.ts";
 import { generateQuote } from "./services/generator.ts";
-import {
-  getQuoteByDate,
-  loadQuotes,
-  replaceQuoteByDate,
-  saveQuotesToJson,
-} from "./services/json-storage.ts";
-import {
-  deleteQuoteMarkdown,
-  saveQuoteToMarkdown,
-} from "./services/markdown-storage.ts";
+import { JsonStorage } from "./services/json-storage.ts";
+import { MarkdownStorage } from "./services/markdown-storage.ts";
 import type { Quote } from "./types/quote.ts";
 
 const runQuoteGeneration = observe(
@@ -42,24 +34,28 @@ const runQuoteGeneration = observe(
       timestamp: now.toISOString(),
     };
 
+    // Initialize storage services
+    const jsonStorage = new JsonStorage();
+    const markdownStorage = new MarkdownStorage();
+
     // Check if quote already exists for today
-    const existingQuote = await getQuoteByDate(today);
+    const existingQuote = await jsonStorage.getQuoteByDate(today);
 
     if (existingQuote) {
       // Replace existing quote
-      await deleteQuoteMarkdown(existingQuote);
-      await replaceQuoteByDate(quote);
+      await markdownStorage.deleteQuote(existingQuote);
+      await jsonStorage.replaceQuoteByDate(quote);
       console.log("🔄 Replaced existing quote for today");
     } else {
       // Add new quote
-      const quotes = await loadQuotes();
+      const quotes = await jsonStorage.loadQuotes();
       quotes.push(quote);
-      await saveQuotesToJson(quotes);
+      await jsonStorage.saveQuotes(quotes);
       console.log("✅ Quote saved successfully!");
     }
 
     // Save to Markdown
-    const filePath = await saveQuoteToMarkdown(quote, quote.date);
+    const filePath = await markdownStorage.saveQuote(quote, quote.date);
 
     // Update trace with output
     updateActiveTrace({

@@ -2,17 +2,16 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import {
-  deleteQuoteMarkdown,
-  saveQuoteToMarkdown,
-} from "../../src/services/markdown-storage.ts";
+import { MarkdownStorage } from "../../src/services/markdown-storage.ts";
 import type { Quote } from "../../src/types/quote.ts";
 
 describe("markdown-storage", () => {
   let tempQuotesDir: string;
+  let storage: MarkdownStorage;
 
   beforeEach(async () => {
     tempQuotesDir = await mkdtemp(join(tmpdir(), "quotely-markdown-"));
+    storage = new MarkdownStorage(tempQuotesDir);
   });
 
   afterEach(async () => {
@@ -61,9 +60,7 @@ date: "2024-11-02"
   it.each(testCases)(
     "should save markdown for '$quote.title'",
     async ({ quote, expectedPath, expectedContent }) => {
-      const filePath = await saveQuoteToMarkdown(quote, quote.date, {
-        baseDir: tempQuotesDir,
-      });
+      const filePath = await storage.saveQuote(quote, quote.date);
 
       expect(filePath).toBe(join(tempQuotesDir, ...expectedPath));
 
@@ -82,14 +79,12 @@ date: "2024-11-02"
     };
 
     // First create the file
-    const filePath = await saveQuoteToMarkdown(quote, quote.date, {
-      baseDir: tempQuotesDir,
-    });
+    const filePath = await storage.saveQuote(quote, quote.date);
 
     expect(await Bun.file(filePath).exists()).toBe(true);
 
     // Now delete it
-    await deleteQuoteMarkdown(quote, { baseDir: tempQuotesDir });
+    await storage.deleteQuote(quote);
 
     // Check with a fresh file reference
     expect(await Bun.file(filePath).exists()).toBe(false);
@@ -104,8 +99,6 @@ date: "2024-11-02"
     };
 
     // Should not throw
-    await expect(
-      deleteQuoteMarkdown(quote, { baseDir: tempQuotesDir }),
-    ).resolves.toBeUndefined();
+    await expect(storage.deleteQuote(quote)).resolves.toBeUndefined();
   });
 });

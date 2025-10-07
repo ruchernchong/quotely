@@ -1,61 +1,63 @@
 import { QUOTES_JSON_PATH } from "../config.ts";
 import type { Quote } from "../types/quote.ts";
 
-type QuotesStorageOptions = {
-  filePath?: string;
-};
+export class JsonStorage {
+  private readonly filePath: string;
+  private quotesCache: Quote[] | null = null;
 
-export const loadQuotes = async (
-  options?: QuotesStorageOptions,
-): Promise<Quote[]> => {
-  const filePath = options?.filePath ?? QUOTES_JSON_PATH;
-  const jsonFile = Bun.file(filePath);
-  if (await jsonFile.exists()) {
-    const content = await jsonFile.text();
-    return JSON.parse(content);
-  }
-  return [];
-};
-
-export const saveQuotesToJson = async (
-  quotes: Quote[],
-  options?: QuotesStorageOptions,
-): Promise<void> => {
-  const filePath = options?.filePath ?? QUOTES_JSON_PATH;
-  await Bun.write(filePath, JSON.stringify(quotes, null, 2));
-};
-
-export const hasTodaysQuote = async (
-  date: string,
-  options?: QuotesStorageOptions,
-): Promise<boolean> => {
-  const quotes = await loadQuotes(options);
-  return quotes.some((quote) => quote.date === date);
-};
-
-export const getQuoteByDate = async (
-  date: string,
-  options?: QuotesStorageOptions,
-): Promise<Quote | undefined> => {
-  const quotes = await loadQuotes(options);
-  return quotes.find((quote) => quote.date === date);
-};
-
-export const replaceQuoteByDate = async (
-  newQuote: Quote,
-  options?: QuotesStorageOptions,
-): Promise<Quote | undefined> => {
-  const quotes = await loadQuotes(options);
-  const index = quotes.findIndex((quote) => quote.date === newQuote.date);
-
-  if (index === -1) {
-    return undefined;
+  constructor(filePath: string = QUOTES_JSON_PATH) {
+    this.filePath = filePath;
   }
 
-  const oldQuote = quotes[index];
-  quotes[index] = newQuote;
+  async loadQuotes(): Promise<Quote[]> {
+    if (this.quotesCache !== null) {
+      return this.quotesCache;
+    }
 
-  await saveQuotesToJson(quotes, options);
+    const jsonFile = Bun.file(this.filePath);
+    if (await jsonFile.exists()) {
+      const content = await jsonFile.text();
+      this.quotesCache = JSON.parse(content);
+      return this.quotesCache;
+    }
 
-  return oldQuote;
-};
+    this.quotesCache = [];
+    return this.quotesCache;
+  }
+
+  async saveQuotes(quotes: Quote[]): Promise<void> {
+    await Bun.write(this.filePath, JSON.stringify(quotes, null, 2));
+    this.quotesCache = quotes;
+  }
+
+  async hasTodayQuote(date: string): Promise<boolean> {
+    const quotes = await this.loadQuotes();
+    return quotes.some((quote) => quote.date === date);
+  }
+
+  async getQuoteByDate(date: string): Promise<Quote | undefined> {
+    const quotes = await this.loadQuotes();
+    return quotes.find((quote) => quote.date === date);
+  }
+
+  async replaceQuoteByDate(newQuote: Quote): Promise<Quote | undefined> {
+    const quotes = await this.loadQuotes();
+    let oldQuote: Quote | undefined;
+
+    const updatedQuotes = quotes.map((quote) => {
+      if (quote.date === newQuote.date) {
+        oldQuote = quote;
+        return newQuote;
+      }
+      return quote;
+    });
+
+    if (!oldQuote) {
+      return;
+    }
+
+    await this.saveQuotes(updatedQuotes);
+
+    return oldQuote;
+  }
+}
