@@ -19,6 +19,14 @@ inputs:
     description: 'Automatically commit and push changes to the repository'
     required: false
     default: 'true'
+  git-user-name:
+    description: 'Git user.name for automated commits'
+    required: false
+    default: 'github-actions[bot]'
+  git-user-email:
+    description: 'Git user.email for automated commits'
+    required: false
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
 
 runs:
   using: 'composite'
@@ -46,8 +54,8 @@ runs:
       shell: bash
       run: |
         if [[ -n "$(git status --porcelain)" ]]; then
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ inputs.git-user-name }}"
+          git config user.email "${{ inputs.git-user-email }}"
           git add quotes.json quotes/
           git commit -m "chore: update quote [skip ci]"
           git push
