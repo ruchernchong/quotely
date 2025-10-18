@@ -22,4 +22,4 @@ jobs:
           langfuse-secret-key: ${{ secrets.LANGFUSE_SECRET_KEY }}
           langfuse-host: ${{ secrets.LANGFUSE_HOST }}
           git-user-name: 'ruchernchong'
-          git-user-email: 'ruchernchong@users.noreply.github.com'
+          git-user-email: '10343662+ruchernchong@users.noreply.github.com'
