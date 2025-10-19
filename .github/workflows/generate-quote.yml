@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Generate daily quote
         uses: ./
         with:
@@ -23,3 +24,32 @@ jobs:
           langfuse-host: ${{ secrets.LANGFUSE_HOST }}
           git-user-name: 'ruchernchong'
           git-user-email: '10343662+ruchernchong@users.noreply.github.com'
+
+      - name: Import GPG key
+        run: echo $GPG_KEY | base64 --decode | gpg --batch --import
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+
+      - name: Add the custom GPG signing program that passes the passphrase to the GPG CLI
+        run: |
+          rm -rf /tmp/gpg.sh
+          echo '#!/bin/bash' >> /tmp/gpg.sh
+          echo 'gpg --batch --pinentry-mode=loopback --passphrase $GPG_KEY_PASSPHRASE $@' >> /tmp/gpg.sh
+          chmod +x /tmp/gpg.sh
+
+      - name: Commit and push changes
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "ruchernchong"
+            git config user.email "10343662+ruchernchong@users.noreply.github.com"
+            git config commit.gpgsign true
+            git config user.signingkey $GPG_KEY_ID
+            git config gpg.program /tmp/gpg.sh
+
+            git add quotes.json quotes/
+            git commit -m "chore: update quote [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi
