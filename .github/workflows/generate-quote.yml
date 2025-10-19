@@ -48,7 +48,7 @@ jobs:
             git config gpg.program /tmp/gpg.sh
 
             git add quotes.json quotes/
-            git commit -m "chore: update quote [skip ci]"
+            git commit -S -m "chore: update quote [skip ci]"
             git push
           else
             echo "No changes to commit."
