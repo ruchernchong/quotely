@@ -172,17 +172,22 @@ bun run check
 
 **Git Hooks:**
 
-This project uses [Husky](https://typicode.github.io/husky/) to enforce code quality:
+This project uses [Husky](https://typicode.github.io/husky/) to enforce code quality and security:
 
-- **pre-commit**: Automatically runs Biome on staged files
+- **pre-commit**: Runs [GitLeaks](https://github.com/gitleaks/gitleaks) for secrets detection, then Biome on staged files
 - **commit-msg**: Validates commit messages follow [Conventional Commits](https://conventionalcommits.org/) format
+
+**Security:**
+- Secrets detection via GitLeaks before every commit
+- Workflow concurrency limits prevent race conditions
+- Pinned Bun version (1.3.5) for reproducible builds
 
 ## 🤖 GitHub Action Usage
 
 ### Composite Action
 
 This project is available as a **reusable GitHub composite action**. The action encapsulates:
-- Bun runtime setup
+- Bun 1.3.5 runtime setup (pinned version)
 - Dependency installation
 - Quote generation with AI
 - Optional automatic commits
@@ -206,12 +211,18 @@ name: Generate Quote
 on:
   schedule:
     - cron: "0 0 * * *"  # Daily at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: quote-generation
+  cancel-in-progress: true
 
 jobs:
   generate-quote:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: ruchernchong/quotely@v1

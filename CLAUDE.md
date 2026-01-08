@@ -226,6 +226,10 @@ The `action.yml` composite action accepts the following inputs:
 - `langfuse-host` - LangFuse host URL (e.g., https://cloud.langfuse.com)
 - `auto-commit` - Automatically commit and push changes (default: `'true'`)
 
+**Runtime:**
+- Uses Bun 1.3.5 (pinned for reproducibility)
+- Automatically set up via `oven-sh/setup-bun@v2`
+
 **Usage in workflows:**
 
 ```yaml
@@ -262,10 +266,16 @@ This project uses **Biome** for formatting and linting:
 
 **Git Hooks:**
 
-- **pre-commit**: Runs `lint-staged` to check and fix staged files with Biome
+- **pre-commit**: Runs GitLeaks for secrets detection, then `lint-staged` to check and fix staged files with Biome
 - **commit-msg**: Validates commit messages against Conventional Commits specification via commitlint
 
 Hooks are managed via Husky and configured in `.husky/` directory.
+
+**Security:**
+
+- **GitLeaks integration**: Pre-commit hook runs `gitleaks protect --staged --verbose` to detect secrets before commits
+- **Workflow concurrency**: Generate quote workflow uses concurrency groups to prevent race conditions
+- **Pinned runtime version**: Composite action uses Bun 1.3.5 for reproducibility
 
 ## Conventional Commits
 

@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: quote-generation
+  cancel-in-progress: true
+
 jobs:
   generate-quote:
     runs-on: ubuntu-latest
