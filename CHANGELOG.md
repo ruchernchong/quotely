@@ -1,3 +1,11 @@
+## [1.1.2](https://github.com/ruchernchong/quotely/compare/v1.1.1...v1.1.2) (2026-02-22)
+
+
+### Bug Fixes
+
+* **ci:** disable husky hooks in release workflow ([743d552](https://github.com/ruchernchong/quotely/commit/743d5520f19cb6c2117db7c254880ba0307cfed7))
+* disable husky hook for CI auto-commit ([8601fde](https://github.com/ruchernchong/quotely/commit/8601fde1209819757ee058988c9f5e6b4077b9da))
+
 ## [1.1.1](https://github.com/ruchernchong/quotely/compare/v1.1.0...v1.1.1) (2025-10-07)
 
 
