@@ -57,7 +57,7 @@ runs:
           git config user.name "${{ inputs.git-user-name }}"
           git config user.email "${{ inputs.git-user-email }}"
           git add quotes.json quotes/
-          git commit -m "chore: update quote [skip ci]"
+          HUSKY=0 git commit -m "chore: update quote [skip ci]"
           git push
         else
           echo "No changes to commit."
