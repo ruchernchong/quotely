@@ -21,7 +21,7 @@ length).
 **Generate a quote:**
 
 ```bash
-pnpm exec tsx src/generate-quote.ts
+node src/generate-quote.ts
 ```
 
 **Install dependencies:**

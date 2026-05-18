@@ -68,7 +68,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 **3. Generate a quote:**
 
 ```bash
-pnpm exec tsx src/generate-quote.ts
+node src/generate-quote.ts
 ```
 
 ## 📁 How It Works
