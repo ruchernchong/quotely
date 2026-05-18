@@ -21,35 +21,32 @@ length).
 **Generate a quote:**
 
 ```bash
-bun run src/generate-quote.ts
+pnpm exec tsx src/generate-quote.ts
 ```
 
 **Install dependencies:**
 
 ```bash
-bun install
+pnpm install
 ```
 
 **Run tests:**
 
 ```bash
-bun test
+pnpm test
 ```
 
-Tests follow Bun's `describe`/`it("should …")` convention and rely on Node-compatible modules via `node:`-prefixed
+Tests use Vitest's `describe`/`it("should …")` convention and rely on Node-compatible modules via `node:`-prefixed
 imports when dealing with the filesystem.
 
 **Code quality:**
 
 ```bash
 # Format code
-bun run format
+pnpm format
 
 # Lint code
-bun run lint
-
-# Check and fix
-bun run check
+pnpm lint
 ```
 
 ## Architecture
@@ -72,7 +69,7 @@ src/
 tests/
 └── services/              # Service-layer tests
     ├── json-storage.test.ts   # JSON storage tests (14 test cases)
-    └── markdown-storage.test.ts # Markdown storage tests (Bun runtime describe/it pattern)
+    └── markdown-storage.test.ts # Markdown storage tests (Vitest test framework)
 .github/workflows/
 ├── generate-quote.yml     # Daily quote generation workflow (uses composite action)
 └── release.yml           # Semantic release workflow
@@ -227,8 +224,8 @@ The `action.yml` composite action accepts the following inputs:
 - `auto-commit` - Automatically commit and push changes (default: `'true'`)
 
 **Runtime:**
-- Uses Bun 1.3.5 (pinned for reproducibility)
-- Automatically set up via `oven-sh/setup-bun@v2`
+- Uses pnpm with Node.js 22
+- Set up via `pnpm/action-setup@v4` and `actions/setup-node@v4`
 
 **Usage in workflows:**
 
@@ -275,7 +272,7 @@ Hooks are managed via Husky and configured in `.husky/` directory.
 
 - **GitLeaks integration**: Pre-commit hook runs `gitleaks protect --staged --verbose` to detect secrets before commits
 - **Workflow concurrency**: Generate quote workflow uses concurrency groups to prevent race conditions
-- **Pinned runtime version**: Composite action uses Bun 1.3.5 for reproducibility
+- **Pinned runtime version**: Composite action uses pnpm with Node.js 22 for reproducibility
 
 ## Conventional Commits
 
@@ -315,12 +312,12 @@ This project uses **semantic-release** to automate versioning and releases based
 
 - Releases are triggered automatically on push to `main` branch via GitHub Actions (`.github/workflows/release.yml`)
 - Tests must pass before release workflow runs
-- Workflow runs `bunx semantic-release` with `GITHUB_TOKEN` authentication
+- Workflow runs `pnpm exec semantic-release` with `GITHUB_TOKEN` authentication
 
 **Manual release:**
 
 ```bash
-bun run release
+pnpm release
 ```
 
 **Configuration:**
@@ -398,7 +395,7 @@ Update this file when making changes that affect user experience or project setu
 **Tech Stack:**
 
 - New major dependencies or frameworks
-- Changes to runtime (Bun, Node, etc.)
+- Changes to runtime (Node, pnpm, etc.)
 - Updates to AI models or providers
 
 **Automation:**

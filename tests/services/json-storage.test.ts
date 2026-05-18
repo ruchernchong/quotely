@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { JsonStorage } from "@/services/json-storage";
 import type { Quote } from "@/types/quote";
 
@@ -30,7 +30,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const loaded = await storage.loadQuotes();
 
@@ -55,8 +55,7 @@ describe("json-storage", () => {
 
     await storage.saveQuotes(quotes);
 
-    const file = Bun.file(testJsonPath);
-    const content = await file.text();
+    const content = await readFile(testJsonPath, "utf-8");
 
     expect(content).toContain("Test Quote");
     expect(content).toContain("This is a test");
@@ -72,7 +71,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const exists = await storage.hasTodayQuote("2025-10-05");
 
@@ -89,7 +88,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const exists = await storage.hasTodayQuote("2025-10-06");
 
@@ -99,7 +98,7 @@ describe("json-storage", () => {
   it("should return false when quotes file is empty", async () => {
     const quotes: Quote[] = [];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const exists = await storage.hasTodayQuote("2025-10-05");
 
@@ -122,7 +121,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const quote = await storage.getQuoteByDate("2025-10-06");
 
@@ -141,7 +140,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const quote = await storage.getQuoteByDate("2025-10-06");
 
@@ -158,7 +157,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const newQuote: Quote = {
       title: "New Quote",
@@ -188,7 +187,7 @@ describe("json-storage", () => {
       },
     ];
 
-    await Bun.write(testJsonPath, JSON.stringify(quotes));
+    await writeFile(testJsonPath, JSON.stringify(quotes), "utf-8");
 
     const newQuote: Quote = {
       title: "New Quote",

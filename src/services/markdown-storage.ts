@@ -1,4 +1,4 @@
-import { mkdir, readdir, unlink } from "node:fs/promises";
+import { mkdir, readdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "date-fns";
 import slugify from "slugify";
@@ -29,7 +29,7 @@ export class MarkdownStorage {
 
     const filePath = this.getMarkdownFilePath(quote);
     const content = this.createMarkdownContent(quote.title, quote.text, date);
-    await Bun.write(filePath, content);
+    await writeFile(filePath, content, "utf-8");
 
     return filePath;
   }

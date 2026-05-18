@@ -31,18 +31,23 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
       with:
-        bun-version: '1.3.5'
+        version: 11
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
 
     - name: Install dependencies
       shell: bash
-      run: bun install
+      run: pnpm install --frozen-lockfile
 
     - name: Generate quote
       shell: bash
-      run: bun run src/generate-quote.ts
+      run: pnpm exec tsx src/generate-quote.ts
       env:
         GOOGLE_GENERATIVE_AI_API_KEY: ${{ inputs.google-generative-ai-api-key }}
         LANGFUSE_PUBLIC_KEY: ${{ inputs.langfuse-public-key }}

@@ -1,3 +1,4 @@
+import { readFile, writeFile } from "node:fs/promises";
 import { QUOTES_JSON_PATH } from "@/config";
 import type { Quote } from "@/types/quote";
 
@@ -14,17 +15,20 @@ export class JsonStorage {
       return this.quotesCache;
     }
 
-    const jsonFile = Bun.file(this.filePath);
-    const quotes: Quote[] = (await jsonFile.exists())
-      ? JSON.parse(await jsonFile.text())
-      : [];
+    let quotes: Quote[] = [];
+    try {
+      const content = await readFile(this.filePath, "utf-8");
+      quotes = JSON.parse(content);
+    } catch {
+      quotes = [];
+    }
 
     this.quotesCache = quotes;
     return quotes;
   }
 
   async saveQuotes(quotes: Quote[]): Promise<void> {
-    await Bun.write(this.filePath, JSON.stringify(quotes, null, 2));
+    await writeFile(this.filePath, JSON.stringify(quotes, null, 2), "utf-8");
     this.quotesCache = quotes;
   }
 
