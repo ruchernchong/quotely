@@ -3,11 +3,11 @@
 [![GitHub release](https://img.shields.io/github/v/release/ruchernchong/quotely)](https://github.com/ruchernchong/quotely/releases)
 [![CI](https://github.com/ruchernchong/quotely/actions/workflows/release.yml/badge.svg)](https://github.com/ruchernchong/quotely/actions/workflows/release.yml)
 [![License](https://img.shields.io/github/license/ruchernchong/quotely)](LICENSE)
-[![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=fff)](https://bun.sh)
+[![pnpm](https://img.shields.io/badge/pnpm-000?logo=pnpm&logoColor=fff)](https://pnpm.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
 [![Vercel AI SDK](https://img.shields.io/badge/Vercel_AI_SDK-000?logo=vercel&logoColor=fff)](https://sdk.vercel.ai/)
 
-A motivational quote generator built with Bun + TypeScript and Vercel AI SDK. Automatically generates and stores
+A motivational quote generator built with TypeScript and pnpm, powered by Vercel AI SDK. Automatically generates and stores
 inspirational quotes with AI-generated titles.
 
 ## ✨ Features
@@ -48,7 +48,7 @@ Add to your workflow:
 **1. Install dependencies:**
 
 ```bash
-bun install
+pnpm install
 ```
 
 **2. Configure environment:**
@@ -68,7 +68,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 **3. Generate a quote:**
 
 ```bash
-bun run src/generate-quote.ts
+pnpm exec tsx src/generate-quote.ts
 ```
 
 ## 📁 How It Works
@@ -149,11 +149,11 @@ This project uses **LangFuse** for comprehensive AI observability and analytics:
 **Testing:**
 
 ```bash
-bun test
+pnpm test
 ```
 
-Tests use Bun's `describe`/`it("should …")` structure and interact with the filesystem through Node compatibility
-imports (e.g. `node:fs/promises`).
+Tests use Vitest's `describe`/`it("should …")` convention and rely on Node-compatible modules via `node:`-prefixed
+imports when dealing with the filesystem.
 
 **Code Quality:**
 
@@ -161,13 +161,10 @@ This project uses [Biome](https://biomejs.dev) for linting and formatting:
 
 ```bash
 # Format code
-bun run format
+pnpm format
 
 # Lint code
-bun run lint
-
-# Check and fix all issues
-bun run check
+pnpm lint
 ```
 
 **Git Hooks:**
@@ -180,14 +177,14 @@ This project uses [Husky](https://typicode.github.io/husky/) to enforce code qua
 **Security:**
 - Secrets detection via GitLeaks before every commit
 - Workflow concurrency limits prevent race conditions
-- Pinned Bun version (1.3.5) for reproducible builds
+- Pinned runtime versions (pnpm with Node.js 26) for reproducible builds
 
 ## 🤖 GitHub Action Usage
 
 ### Composite Action
 
 This project is available as a **reusable GitHub composite action**. The action encapsulates:
-- Bun 1.3.5 runtime setup (pinned version)
+- pnpm with Node.js 26 runtime setup
 - Dependency installation
 - Quote generation with AI
 - Optional automatic commits
@@ -264,15 +261,16 @@ A separate workflow (`.github/workflows/release.yml`) runs on pushes to `main`, 
 
 Semantic-release keeps project versions, changelog entries, and GitHub releases in sync with Conventional Commits.
 
-- `.github/workflows/release.yml` runs on pushes to `main` after tests succeed and executes `bunx semantic-release`
+- `.github/workflows/release.yml` runs on pushes to `main` after tests succeed and executes `pnpm exec semantic-release`
 - Releases update `CHANGELOG.md`, tag the commit, and publish GitHub releases without publishing to npm
-- Run `bun run release` locally to trigger the same flow (requires `GITHUB_TOKEN` with repo scope when run outside CI)
+- Run `pnpm release` locally to trigger the same flow (requires `GITHUB_TOKEN` with repo scope when run outside CI)
 
 ## 🛠️ Tech Stack
 
 **Runtime & Language:**
 
-- [Bun](https://bun.sh) - Fast all-in-one JavaScript runtime
+- [Node.js](https://nodejs.org) - JavaScript runtime
+- [pnpm](https://pnpm.io) - Fast, disk-efficient package manager
 - TypeScript - Type safety
 
 **AI & Data:**

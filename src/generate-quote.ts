@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { observe, updateActiveTrace } from "@langfuse/tracing";
 import { format } from "date-fns";
 import { QUOTES_JSON_PATH } from "@/config";

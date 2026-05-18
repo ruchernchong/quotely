@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { addDays, format, isValid } from "date-fns";
 import { generateQuote } from "@/services/generator";
 import { JsonStorage } from "@/services/json-storage";
@@ -66,7 +67,7 @@ const printHelp = (): void => {
   console.log("Backfill quotes for a date range.");
   console.log("");
   console.log(
-    "Usage: bun run src/backfill-quotes.ts --start YYYY-MM-DD --end YYYY-MM-DD [--replace] [--dry-run]",
+    "Usage: pnpm exec tsx src/backfill-quotes.ts --start YYYY-MM-DD --end YYYY-MM-DD [--replace] [--dry-run]",
   );
   console.log("");
   console.log("Options:");

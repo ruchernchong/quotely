@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MarkdownStorage } from "@/services/markdown-storage";
 import type { Quote } from "@/types/quote";
 
@@ -66,9 +66,8 @@ date: "2024-11-02"
 
     expect(filePath).toBe(join(tempQuotesDir, ...expectedPath));
 
-    const file = Bun.file(filePath);
-    expect(await file.exists()).toBe(true);
-    expect(await file.text()).toBe(expectedContent);
+    await expect(access(filePath)).resolves.toBeUndefined();
+    expect(await readFile(filePath, "utf-8")).toBe(expectedContent);
   });
 
   it("should delete markdown file", async () => {
@@ -79,16 +78,13 @@ date: "2024-11-02"
       timestamp: "2025-10-05T12:00:00.000Z",
     };
 
-    // First create the file
     const filePath = await storage.saveQuote(quote, quote.date);
 
-    expect(await Bun.file(filePath).exists()).toBe(true);
+    await expect(access(filePath)).resolves.toBeUndefined();
 
-    // Now delete it
     await storage.deleteQuote(quote);
 
-    // Check with a fresh file reference
-    expect(await Bun.file(filePath).exists()).toBe(false);
+    await expect(access(filePath)).rejects.toThrow();
   });
 
   it("should not throw error when deleting non-existent markdown file", async () => {
@@ -99,7 +95,6 @@ date: "2024-11-02"
       timestamp: "2025-10-05T12:00:00.000Z",
     };
 
-    // Should not throw
     await expect(storage.deleteQuote(quote)).resolves.toBeUndefined();
   });
 });

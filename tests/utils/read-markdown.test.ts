@@ -1,6 +1,6 @@
-import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { describe, expect, it } from "vitest";
 import { readMarkdown } from "@/utils/read-markdown";
 
 describe("readMarkdown", () => {
@@ -8,6 +8,7 @@ describe("readMarkdown", () => {
     const content = readMarkdown({
       filename: "test-template.md",
       importMetaUrl: import.meta.url,
+      directory: "prompts",
     });
 
     expect(content).toBeTruthy();
@@ -19,6 +20,7 @@ describe("readMarkdown", () => {
     const content = readMarkdown({
       filename: "test-template.md",
       importMetaUrl: import.meta.url,
+      directory: "prompts",
     });
 
     expect(content).toContain("{{title}}");
@@ -39,15 +41,14 @@ describe("readMarkdown", () => {
     const content = readMarkdown({
       filename: "test-template.md",
       importMetaUrl: import.meta.url,
+      directory: "prompts",
     });
 
-    // Should not contain encoding artifacts
-    expect(content).not.toContain("�");
+    expect(content).not.toContain("\uFFFD");
   });
 
   it("should work with production quote-frontmatter.md", () => {
-    // Verify the actual production file works
-    const projectRoot = join(import.meta.dir, "../..");
+    const projectRoot = join(import.meta.dirname, "../..");
     const quoteTemplate = readFileSync(
       join(projectRoot, "src/templates/quote-frontmatter.md"),
       "utf-8",
@@ -60,8 +61,7 @@ describe("readMarkdown", () => {
   });
 
   it("should work with production generate-quote.md", () => {
-    // Verify the actual production file works
-    const projectRoot = join(import.meta.dir, "../..");
+    const projectRoot = join(import.meta.dirname, "../..");
     const generateQuote = readFileSync(
       join(projectRoot, "src/prompts/generate-quote.md"),
       "utf-8",
