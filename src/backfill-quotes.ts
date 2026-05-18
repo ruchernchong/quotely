@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { addDays, format, isValid } from "date-fns";
 import { generateQuote } from "@/services/generator";
 import { JsonStorage } from "@/services/json-storage";

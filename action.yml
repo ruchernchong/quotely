@@ -47,7 +47,7 @@ runs:
 
     - name: Generate quote
       shell: bash
-      run: node src/generate-quote.ts
+      run: pnpm exec tsx src/generate-quote.ts
       env:
         GOOGLE_GENERATIVE_AI_API_KEY: ${{ inputs.google-generative-ai-api-key }}
         LANGFUSE_PUBLIC_KEY: ${{ inputs.langfuse-public-key }}
