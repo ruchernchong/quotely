@@ -57,18 +57,19 @@ date: "2024-11-02"
     },
   ];
 
-  it.each(testCases)(
-    "should save markdown for '$quote.title'",
-    async ({ quote, expectedPath, expectedContent }) => {
-      const filePath = await storage.saveQuote(quote, quote.date);
+  it.each(testCases)("should save markdown for '$quote.title'", async ({
+    quote,
+    expectedPath,
+    expectedContent,
+  }) => {
+    const filePath = await storage.saveQuote(quote, quote.date);
 
-      expect(filePath).toBe(join(tempQuotesDir, ...expectedPath));
+    expect(filePath).toBe(join(tempQuotesDir, ...expectedPath));
 
-      const file = Bun.file(filePath);
-      expect(await file.exists()).toBe(true);
-      expect(await file.text()).toBe(expectedContent);
-    },
-  );
+    const file = Bun.file(filePath);
+    expect(await file.exists()).toBe(true);
+    expect(await file.text()).toBe(expectedContent);
+  });
 
   it("should delete markdown file", async () => {
     const quote: Quote = {
