@@ -278,8 +278,8 @@ Hooks are managed via Husky and configured in `.husky/` directory.
 
 This project enforces **Conventional Commits** specification for commit messages:
 
-- **Format**: `type(scope): subject`
-- **Common types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- **Format**: `type: subject` (no scope — scopes are disallowed since this is not a monorepo)
+- **Allowed types**: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`
 - **Automated validation**: Git hooks (husky + commitlint) validate messages before commit
 
 **Examples:**
