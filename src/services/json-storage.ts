@@ -18,9 +18,14 @@ export class JsonStorage {
     let quotes: Quote[] = [];
     try {
       const content = await readFile(this.filePath, "utf-8");
-      quotes = JSON.parse(content);
-    } catch {
-      quotes = [];
+      quotes = JSON.parse(content) as Quote[];
+    } catch (error) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code === "ENOENT") {
+        quotes = [];
+      } else {
+        throw error;
+      }
     }
 
     this.quotesCache = quotes;
