@@ -1,10 +1,7 @@
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { readMarkdown } from "@/utils/read-markdown";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe("readMarkdown", () => {
   it("should read markdown file from prompts directory", () => {
@@ -51,7 +48,7 @@ describe("readMarkdown", () => {
   });
 
   it("should work with production quote-frontmatter.md", () => {
-    const projectRoot = join(__dirname, "../..");
+    const projectRoot = join(import.meta.dirname, "../..");
     const quoteTemplate = readFileSync(
       join(projectRoot, "src/templates/quote-frontmatter.md"),
       "utf-8",
@@ -64,7 +61,7 @@ describe("readMarkdown", () => {
   });
 
   it("should work with production generate-quote.md", () => {
-    const projectRoot = join(__dirname, "../..");
+    const projectRoot = join(import.meta.dirname, "../..");
     const generateQuote = readFileSync(
       join(projectRoot, "src/prompts/generate-quote.md"),
       "utf-8",
