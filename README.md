@@ -68,7 +68,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 **3. Generate a quote:**
 
 ```bash
-node src/generate-quote.ts
+pnpm exec tsx src/generate-quote.ts
 ```
 
 ## 📁 How It Works
@@ -177,14 +177,14 @@ This project uses [Husky](https://typicode.github.io/husky/) to enforce code qua
 **Security:**
 - Secrets detection via GitLeaks before every commit
 - Workflow concurrency limits prevent race conditions
-- Pinned runtime versions (pnpm with Node.js 22) for reproducible builds
+- Pinned runtime versions (pnpm with Node.js 26) for reproducible builds
 
 ## 🤖 GitHub Action Usage
 
 ### Composite Action
 
 This project is available as a **reusable GitHub composite action**. The action encapsulates:
-- pnpm with Node.js 22 runtime setup
+- pnpm with Node.js 26 runtime setup
 - Dependency installation
 - Quote generation with AI
 - Optional automatic commits

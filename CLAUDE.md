@@ -21,7 +21,7 @@ length).
 **Generate a quote:**
 
 ```bash
-node src/generate-quote.ts
+pnpm exec tsx src/generate-quote.ts
 ```
 
 **Install dependencies:**
@@ -224,8 +224,8 @@ The `action.yml` composite action accepts the following inputs:
 - `auto-commit` - Automatically commit and push changes (default: `'true'`)
 
 **Runtime:**
-- Uses pnpm with Node.js 22
-- Set up via `pnpm/action-setup@v4` and `actions/setup-node@v4`
+- Uses pnpm with Node.js 26
+- Set up via `pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8` and `actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0`
 
 **Usage in workflows:**
 
@@ -272,7 +272,7 @@ Hooks are managed via Husky and configured in `.husky/` directory.
 
 - **GitLeaks integration**: Pre-commit hook runs `gitleaks protect --staged --verbose` to detect secrets before commits
 - **Workflow concurrency**: Generate quote workflow uses concurrency groups to prevent race conditions
-- **Pinned runtime version**: Composite action uses pnpm with Node.js 22 for reproducibility
+- **Pinned runtime version**: Composite action uses pnpm with Node.js 26 for reproducibility
 
 ## Conventional Commits
 
