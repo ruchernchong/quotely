@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/ruchernchong/quotely/compare/v1.1.3...v1.1.4) (2026-05-18)
+
+
+### Bug Fixes
+
+* **security:** prevent script injection in action.yml git config steps ([77fb218](https://github.com/ruchernchong/quotely/commit/77fb218b9367ed1b21ee10728f1919c10c14a417))
+
 ## [1.1.3](https://github.com/ruchernchong/quotely/compare/v1.1.2...v1.1.3) (2026-02-22)
 
 
