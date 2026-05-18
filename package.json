@@ -7,7 +7,6 @@
   "scripts": {
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "check": "biome check --write .",
     "prepare": "husky",
     "release": "semantic-release"
   },
