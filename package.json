@@ -39,5 +39,6 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json}": "biome check --write"
-  }
+  },
+  "packageManager": "pnpm@11.1.2"
 }
