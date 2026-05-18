@@ -63,6 +63,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 4.1.6
         version: 4.1.6(vitest@4.1.6)
+      conventional-changelog-conventionalcommits:
+        specifier: 9.3.1
+        version: 9.3.1
       husky:
         specifier: 9.1.7
         version: 9.1.7
