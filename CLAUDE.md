@@ -270,7 +270,7 @@ Hooks are managed via Husky and configured in `.husky/` directory.
 
 **Security:**
 
-- **GitLeaks integration**: Pre-commit hook runs `gitleaks protect --staged --verbose` to detect secrets before commits
+- **GitLeaks integration**: Pre-commit hook runs `gitleaks git --staged --redact --verbose` to detect secrets before commits
 - **Workflow concurrency**: Generate quote workflow uses concurrency groups to prevent race conditions
 - **Pinned runtime version**: Composite action uses pnpm with Node.js 26 for reproducibility
 
